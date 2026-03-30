@@ -416,8 +416,10 @@ body.cursor-text .cursor__ring {
   letter-spacing: 0.5px;
   transition: color 0.3s;
   cursor: none;
+  display: inline-block;
 }
 .nav__links a:hover { color: #fff; }
+.nav__links a.scrambling { font-family: 'Space Grotesk', monospace; }
 
 .nav__cta {
   padding: 10px 24px !important;
@@ -1165,8 +1167,10 @@ body.cursor-text .cursor__ring {
   font-size: 0.85rem;
   transition: color 0.3s;
   cursor: none;
+  display: inline-block;
 }
 .footer__nav a:hover { color: #fff; }
+.footer__nav a.scrambling { font-family: 'Space Grotesk', monospace; }
 
 .footer__tagline {
   font-size: 0.75rem;

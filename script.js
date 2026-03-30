@@ -330,6 +330,52 @@
     }, 150);
   }
 
+  /* ----- TEXT SCRAMBLE HOVER ----- */
+  function initScramble() {
+    var chars = '{}<>/\\01!@#$%^&*_-+=|;:?~';
+    var selector = '.nav__links a:not(.nav__cta), .footer__nav a, .tag, .work__tag, .pillar__num, .service-row__num, .pricing__tier, .footer__social a';
+    var targets = document.querySelectorAll(selector);
+
+    targets.forEach(function (el) {
+      var original = el.textContent;
+      var scrambleTimer = null;
+
+      el.addEventListener('mouseenter', function () {
+        if (scrambleTimer) return;
+        el.classList.add('scrambling');
+        var iteration = 0;
+        var len = original.length;
+        scrambleTimer = setInterval(function () {
+          var text = '';
+          for (var i = 0; i < len; i++) {
+            if (i < iteration) {
+              text += original[i];
+            } else {
+              text += chars[Math.floor(Math.random() * chars.length)];
+            }
+          }
+          el.textContent = text;
+          iteration += 1 / 2;
+          if (iteration >= len) {
+            clearInterval(scrambleTimer);
+            scrambleTimer = null;
+            el.textContent = original;
+            el.classList.remove('scrambling');
+          }
+        }, 30);
+      });
+
+      el.addEventListener('mouseleave', function () {
+        if (scrambleTimer) {
+          clearInterval(scrambleTimer);
+          scrambleTimer = null;
+        }
+        el.textContent = original;
+        el.classList.remove('scrambling');
+      });
+    });
+  }
+
   /* ----- CONTACT FORM ----- */
   function initForm() {
     var form = document.getElementById('contactForm');
@@ -373,6 +419,7 @@
     initNav();
     initAnchors();
     initForm();
+    initScramble();
     initPreloader();
 
     // recalc on resize

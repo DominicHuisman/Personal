@@ -1,311 +1,249 @@
 /* ============================================
-   NEXUS DIGITAL — SMOOTH EXPERIENCE ENGINE
+   NEXUS DIGITAL — INTERACTIONS & ENGINE
    ============================================ */
+
 (function () {
   'use strict';
 
-  /* ----- GLOBALS ----- */
+  /* ---------- Preloader ---------- */
+  const preloader = document.querySelector('.preloader');
+  const preloaderFill = document.querySelector('.preloader__fill');
+  let loadProgress = 0;
+
+  function advanceLoader() {
+    loadProgress += Math.random() * 20 + 10;
+    if (loadProgress > 100) loadProgress = 100;
+    if (preloaderFill) preloaderFill.style.width = loadProgress + '%';
+    if (loadProgress < 100) requestAnimationFrame(advanceLoader);
+  }
+  advanceLoader();
+
+  window.addEventListener('load', () => {
+    if (preloaderFill) preloaderFill.style.width = '100%';
+    setTimeout(() => {
+      if (preloader) preloader.classList.add('done');
+      document.body.style.overflow = '';
+      initAfterLoad();
+    }, 600);
+  });
+
+  /* ---------- DOM ---------- */
   const wrapper = document.getElementById('smooth-wrapper');
   const content = document.getElementById('smooth-content');
-  const body    = document.body;
+  const nav = document.querySelector('.nav');
+  const hero = document.querySelector('.hero');
+  const rocketSection = document.querySelector('.rocket-intro');
+  const rocketSvg = document.querySelector('.rocket-intro__svg');
+  const rocketHint = document.querySelector('.rocket-intro__hint');
+  const starCanvas = document.getElementById('starfield');
+  const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
-  let current  = 0;   // lerp'd scroll position
-  let target   = 0;   // actual scroll position
-  const ease   = 0.075;
-  let raf;
+  /* ---------- State ---------- */
+  let current = 0, target = 0, ease = 0.075;
   let wh = window.innerHeight;
   let ww = window.innerWidth;
+  let contentH = 0;
 
-  /* ----- RESIZE UTILITY ----- */
+  /* ---------- Smooth Scroll Engine ---------- */
   function setBodyHeight() {
-    body.style.height = content.scrollHeight + 'px';
+    contentH = content.scrollHeight;
+    document.body.style.height = contentH + 'px';
   }
 
-  /* ----- SMOOTH SCROLL LOOP ----- */
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
   function smoothScroll() {
     target = window.scrollY;
-    current += (target - current) * ease;
-    // snap precision
-    if (Math.abs(target - current) < 0.5) current = target;
-    content.style.transform = 'translate3d(0,' + (-current) + 'px,0)';
-    // gradient text scroll color
-    updateGradientText();
-    // parallax
-    updateParallax();
-    // rocket zoom
-    updateRocket();
-    raf = requestAnimationFrame(smoothScroll);
+    current = lerp(current, target, ease);
+    if (Math.abs(current - target) < 0.5) current = target;
+    content.style.transform = 'translate3d(0,' + -current + 'px,0)';
+
+    // Parallax
+    parallaxEls.forEach(el => {
+      const speed = parseFloat(el.dataset.speed) || 0;
+      const rect = el.getBoundingClientRect();
+      const y = (rect.top + rect.height / 2 - wh / 2) * speed;
+      el.style.transform = 'translate3d(0,' + y + 'px,0)';
+    });
+
+    // Rocket
+    if (rocketSection && rocketSvg) {
+      const rocketTop = rocketSection.offsetTop;
+      const rocketH = rocketSection.offsetHeight - wh;
+      const rocketProgress = Math.max(0, Math.min(1, (current - rocketTop) / rocketH));
+      const expScale = 1 + (Math.pow(rocketProgress, 2.5) * 49);
+      rocketSvg.style.transform = 'scale(' + expScale + ')';
+      const fadeStart = 0.6;
+      const rocketOpacity = rocketProgress > fadeStart
+        ? 1 - ((rocketProgress - fadeStart) / (1 - fadeStart))
+        : 1;
+      rocketSvg.style.opacity = Math.max(0, rocketOpacity);
+      if (rocketHint) rocketHint.style.opacity = rocketProgress > 0.1 ? 0 : 1;
+      if (nav) nav.style.opacity = rocketProgress > 0.05 ? 0 : 1;
+    }
+
+    // Gradient text hue (mouse-driven, see mousemove)
+    updateGradientHue();
+
+    requestAnimationFrame(smoothScroll);
   }
 
-  /* ----- MOUSE-DRIVEN GRADIENT TEXT ----- */
-  var gradientEls = [];
-  var mouseXTarget = 0;
-  var hueSmooth = 260; // starting hue
-  var hueLerp = 0.02;  // very slow blend
+  /* ---------- Parallax ---------- */
+  let parallaxEls = [];
 
-  function initGradientText() {
-    gradientEls = document.querySelectorAll('.gradient-text');
-    document.addEventListener('mousemove', function (e) {
-      mouseXTarget = e.clientX / ww;  // 0 → 1
+  /* ---------- Mouse-driven gradient hue ---------- */
+  let mouseX = 0.5, mouseY = 0.5;
+  let hueTarget = 250, hueCurrent = 250;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX / ww;
+    mouseY = e.clientY / wh;
+  });
+
+  function updateGradientHue() {
+    hueTarget = 220 + mouseX * 60; // 220-280 range
+    hueCurrent = lerp(hueCurrent, hueTarget, 0.02);
+    document.querySelectorAll('.gradient-text').forEach(el => {
+      el.style.setProperty('--hue', hueCurrent);
     });
   }
 
-  function updateGradientText() {
-    if (!gradientEls.length) return;
-    // map mouse X to hue range: 220 (blue) → 280 (purple)
-    var targetHue = 220 + mouseXTarget * 60;
-    hueSmooth += (targetHue - hueSmooth) * hueLerp;
-    for (var i = 0; i < gradientEls.length; i++) {
-      gradientEls[i].style.setProperty('--hue', hueSmooth);
-    }
-  }
+  /* ---------- Custom Cursor ---------- */
+  const cursor = document.querySelector('.cursor');
+  const cursorDot = document.querySelector('.cursor__dot');
+  const cursorRing = document.querySelector('.cursor__ring');
+  const cursorLabel = document.querySelector('.cursor__label');
+  let cx = 0, cy = 0, cxTarget = 0, cyTarget = 0;
 
-  /* ----- PARALLAX ----- */
-  const parallaxEls = [];
-
-  function cacheParallax() {
-    parallaxEls.length = 0;
-    document.querySelectorAll('[data-speed]').forEach(function (el) {
-      parallaxEls.push({
-        el: el,
-        speed: parseFloat(el.dataset.speed),
-        top: 0
-      });
-    });
-    recalcParallax();
-  }
-
-  function recalcParallax() {
-    parallaxEls.forEach(function (item) {
-      var rect = item.el.getBoundingClientRect();
-      item.top = rect.top + current;
-    });
-  }
-
-  function updateParallax() {
-    parallaxEls.forEach(function (item) {
-      var offset = (current - item.top + wh) * item.speed;
-      item.el.style.transform = 'translate3d(0,' + offset + 'px,0)';
-    });
-  }
-
-  /* ----- REVEAL ON SCROLL ----- */
-  function initReveals() {
-    var reveals = document.querySelectorAll('.reveal');
-    if (!reveals.length) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          var delay = entry.target.dataset.delay || 0;
-          if (delay > 0) {
-            setTimeout(function () {
-              entry.target.classList.add('visible');
-            }, delay * 1000);
-          } else {
-            entry.target.classList.add('visible');
-          }
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: '-40px 0px', threshold: 0.15 });
-
-    reveals.forEach(function (el) { observer.observe(el); });
-  }
-
-  /* ----- LINE REVEALS ----- */
-  function initLineReveals() {
-    var containers = document.querySelectorAll('.hero__title, .big-cta__title');
-    if (!containers.length) return;
-
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('lines-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: '-20px 0px', threshold: 0.2 });
-
-    containers.forEach(function (el) { observer.observe(el); });
-  }
-
-  /* ----- ROCKET INTRO ----- */
-  var rocketSvg, rocketHint, rocketSection, rocketZoneEnd;
-
-  function initRocket() {
-    rocketSvg     = document.getElementById('rocketSvg');
-    rocketHint    = document.querySelector('.rocket-intro__hint');
-    rocketSection = document.getElementById('rocketIntro');
-    if (!rocketSection) return;
-    rocketZoneEnd = rocketSection.offsetHeight - wh;
-  }
-
-  function updateRocket() {
-    if (!rocketSvg || !rocketSection) return;
-    // progress 0→1 through the rocket section (300vh minus one screen)
-    var progress = current / rocketZoneEnd;
-    if (progress < 0) progress = 0;
-    if (progress > 1) progress = 1;
-
-    // Scale: 1 → 50  (exponential for dramatic zoom)
-    var scale = 1 + Math.pow(progress, 2.5) * 49;
-    // Opacity: visible until very end, then fade out
-    var opacity = progress < 0.7 ? 1 : 1 - ((progress - 0.7) / 0.3);
-    // Flames grow
-    var flameScale = 1 + progress * 2;
-
-    rocketSvg.style.transform = 'scale(' + scale + ')';
-    rocketSvg.style.opacity = opacity;
-
-    // Flame intensity via filter glow
-    var glowSize = 40 + progress * 120;
-    rocketSvg.style.filter = 'drop-shadow(0 0 ' + glowSize + 'px rgba(108,92,231,' + (0.2 + progress * 0.6) + '))';
-
-    // Scale flames
-    var flames = rocketSection.querySelectorAll('.rocket__flame');
-    flames.forEach(function(f) {
-      f.style.transform = 'scaleY(' + flameScale + ')';
-    });
-
-    // Hide hint as soon as scrolling starts
-    if (rocketHint) {
-      rocketHint.style.opacity = progress > 0.05 ? '0' : '1';
-    }
-
-    // Hide nav until rocket section is passed
-    var nav = document.getElementById('nav');
-    if (nav) {
-      nav.style.opacity = progress < 0.95 ? '0' : '1';
-      nav.style.pointerEvents = progress < 0.95 ? 'none' : '';
-    }
-  }
-
-  /* ----- HERO ACTIVATE ----- */
-  function initHero() {
-    var hero = document.querySelector('.hero');
-    if (hero) {
-      setTimeout(function () { hero.classList.add('is-active'); }, 600);
-    }
-  }
-
-  /* ----- STARFIELD CANVAS ----- */
-  function initStarfield() {
-    var canvas = document.getElementById('starfield');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var stars = [];
-    var count = 350;
-
-    function resize() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createStars() {
-      stars = [];
-      for (var i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 1.2 + 0.3,
-          a: Math.random() * 0.5 + 0.1,
-          pulse: Math.random() * 0.02 + 0.005,
-          phase: Math.random() * Math.PI * 2
-        });
-      }
-    }
-
-    var frame = 0;
-    function draw() {
-      frame++;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (var i = 0; i < stars.length; i++) {
-        var s = stars[i];
-        var alpha = s.a + Math.sin(frame * s.pulse + s.phase) * 0.15;
-        if (alpha < 0) alpha = 0;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,' + alpha + ')';
-        ctx.fill();
-      }
-      requestAnimationFrame(draw);
-    }
-
-    resize();
-    createStars();
-    draw();
-    window.addEventListener('resize', function () {
-      resize();
-      createStars();
-    });
-  }
-
-  /* ----- CUSTOM CURSOR ----- */
   function initCursor() {
-    if (ww < 769) return;
-    var cursor = document.getElementById('cursor');
-    var label  = document.getElementById('cursorLabel');
-    if (!cursor) return;
+    if (!cursor || ww < 769) return;
 
-    var mx = 0, my = 0;
-    var cx = 0, cy = 0;
-
-    document.addEventListener('mousemove', function (e) {
-      mx = e.clientX; my = e.clientY;
+    document.addEventListener('mousemove', e => {
+      cxTarget = e.clientX;
+      cyTarget = e.clientY;
     });
 
-    function loop() {
-      cx += (mx - cx) * 0.15;
-      cy += (my - cy) * 0.15;
-      cursor.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)';
-      requestAnimationFrame(loop);
-    }
-    loop();
-
-    // hover states
-    var hovers = document.querySelectorAll('a, button, .service-row, .work__card');
-    hovers.forEach(function (el) {
-      el.addEventListener('mouseenter', function () {
-        body.classList.add('cursor-hover');
-        var text = el.dataset.cursorText;
-        if (text && label) {
-          label.textContent = text;
-          body.classList.add('cursor-text');
+    // Hover targets
+    const hoverables = document.querySelectorAll('a, button, .btn, .work__card, .diff__card, .feature, .package, .process__step');
+    hoverables.forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        document.body.classList.add('cursor-hover');
+        const txt = el.dataset.cursorText;
+        if (txt && cursorLabel) {
+          cursorLabel.textContent = txt;
+          document.body.classList.add('cursor-text');
         }
       });
-      el.addEventListener('mouseleave', function () {
-        body.classList.remove('cursor-hover', 'cursor-text');
-        if (label) label.textContent = '';
+      el.addEventListener('mouseleave', () => {
+        document.body.classList.remove('cursor-hover', 'cursor-text');
+        if (cursorLabel) cursorLabel.textContent = '';
       });
     });
+
+    function animateCursor() {
+      cx = lerp(cx, cxTarget, 0.15);
+      cy = lerp(cy, cyTarget, 0.15);
+      if (cursor) cursor.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
   }
 
-  /* ----- NAVIGATION ----- */
-  function initNav() {
-    var nav = document.getElementById('nav');
-    var toggle = document.getElementById('navToggle');
-    var links  = document.getElementById('navLinks');
+  /* ---------- Starfield ---------- */
+  let stars = [];
+  const STAR_COUNT = 350;
 
-    // scrolled state — check against lerp'd value
-    function checkScroll() {
-      if (current > 80) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
-      }
-      requestAnimationFrame(checkScroll);
+  function initStarfield() {
+    if (!starCanvas || !ctx) return;
+    resizeCanvas();
+    for (let i = 0; i < STAR_COUNT; i++) {
+      stars.push({
+        x: Math.random() * ww,
+        y: Math.random() * wh,
+        r: Math.random() * 1.2 + 0.3,
+        a: Math.random() * 0.5 + 0.1,
+        s: Math.random() * 0.5 + 0.1,
+        d: Math.random() * Math.PI * 2,
+      });
     }
-    checkScroll();
+    animateStars();
+  }
 
-    // mobile toggle
+  function resizeCanvas() {
+    if (!starCanvas) return;
+    starCanvas.width = ww;
+    starCanvas.height = wh;
+  }
+
+  function animateStars() {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, ww, wh);
+    const time = Date.now() * 0.001;
+    stars.forEach(s => {
+      const twinkle = 0.5 + 0.5 * Math.sin(time * s.s + s.d);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(200,200,255,' + (s.a * twinkle) + ')';
+      ctx.fill();
+    });
+    requestAnimationFrame(animateStars);
+  }
+
+  /* ---------- Reveals ---------- */
+  function initReveals() {
+    const reveals = document.querySelectorAll('.reveal');
+    const lines = document.querySelectorAll('[data-lines]');
+
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const delay = parseInt(e.target.dataset.delay) || 0;
+          setTimeout(() => e.target.classList.add('visible'), delay);
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    reveals.forEach(el => revealObs.observe(el));
+
+    const lineObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('lines-visible');
+          lineObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    lines.forEach(el => lineObs.observe(el));
+
+    // Hero activation
+    if (hero) {
+      setTimeout(() => hero.classList.add('is-active'), 800);
+    }
+  }
+
+  /* ---------- Nav ---------- */
+  function initNav() {
+    if (!nav) return;
+
+    // Scroll state
+    const scrollCheck = () => {
+      if (target > 80) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    };
+    window.addEventListener('scroll', scrollCheck, { passive: true });
+
+    // Mobile toggle
+    const toggle = nav.querySelector('.nav__toggle');
+    const links = nav.querySelector('.nav__links');
     if (toggle && links) {
-      toggle.addEventListener('click', function () {
+      toggle.addEventListener('click', () => {
         toggle.classList.toggle('active');
         links.classList.toggle('open');
       });
-      links.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function () {
+      links.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
           toggle.classList.remove('active');
           links.classList.remove('open');
         });
@@ -313,156 +251,105 @@
     }
   }
 
-  /* ----- SMOOTH ANCHOR LINKS ----- */
+  /* ---------- Smooth Anchors ---------- */
   function initAnchors() {
-    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-      a.addEventListener('click', function (e) {
-        var id = a.getAttribute('href');
-        if (id === '#') return;
-        var el = document.querySelector(id);
-        if (!el) return;
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
         e.preventDefault();
-        // calculate position inside smooth-content
-        var rect = el.getBoundingClientRect();
-        var scrollTo = rect.top + current - 80;
-        window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+        const id = a.getAttribute('href');
+        if (id === '#') return;
+        const el = document.querySelector(id);
+        if (!el) return;
+        const top = el.offsetTop;
+        window.scrollTo({ top, behavior: 'auto' });
+        target = top;
       });
     });
   }
 
-  /* ----- PRELOADER ----- */
-  function initPreloader() {
-    var preloader = document.getElementById('preloader');
-    var fill      = document.getElementById('preloaderFill');
-    if (!preloader || !fill) return;
+  /* ---------- Text Scramble ---------- */
+  const CHARS = '{}/<>01!@#$%^&*()_+~`|\\:;"\',.?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-    var progress = 0;
-    var interval = setInterval(function () {
-      progress += Math.random() * 20 + 10;
-      if (progress > 100) progress = 100;
-      fill.style.width = progress + '%';
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(function () {
-          preloader.classList.add('done');
-          // recalc after fonts/images settle
-          setTimeout(function () {
-            setBodyHeight();
-            cacheParallax();
-          }, 300);
-        }, 400);
-      }
-    }, 150);
-  }
+  function scramble(el) {
+    const original = el.dataset.text || el.textContent;
+    if (!el.dataset.text) el.dataset.text = original;
+    const len = original.length;
+    let frame = 0;
+    const totalFrames = 12;
 
-  /* ----- TEXT SCRAMBLE HOVER ----- */
-  function initScramble() {
-    var chars = '{}<>/\\01!@#$%^&*_-+=|;:?~';
-    var selector = '.nav__links a:not(.nav__cta), .footer__nav a, .tag, .work__tag, .pillar__num, .service-row__num, .pricing__tier, .footer__social a';
-    var targets = document.querySelectorAll(selector);
-
-    targets.forEach(function (el) {
-      var original = el.textContent;
-      var scrambleTimer = null;
-
-      el.addEventListener('mouseenter', function () {
-        if (scrambleTimer) return;
-        el.classList.add('scrambling');
-        var iteration = 0;
-        var len = original.length;
-        scrambleTimer = setInterval(function () {
-          var text = '';
-          for (var i = 0; i < len; i++) {
-            if (i < iteration) {
-              text += original[i];
-            } else {
-              text += chars[Math.floor(Math.random() * chars.length)];
-            }
-          }
-          el.textContent = text;
-          iteration += 1 / 2;
-          if (iteration >= len) {
-            clearInterval(scrambleTimer);
-            scrambleTimer = null;
-            el.textContent = original;
-            el.classList.remove('scrambling');
-          }
-        }, 30);
-      });
-
-      el.addEventListener('mouseleave', function () {
-        if (scrambleTimer) {
-          clearInterval(scrambleTimer);
-          scrambleTimer = null;
+    function step() {
+      let out = '';
+      for (let i = 0; i < len; i++) {
+        if (original[i] === ' ') { out += ' '; continue; }
+        if (frame > (i / len) * totalFrames) {
+          out += original[i];
+        } else {
+          out += CHARS[Math.floor(Math.random() * CHARS.length)];
         }
-        el.textContent = original;
-        el.classList.remove('scrambling');
-      });
+      }
+      el.textContent = out;
+      frame++;
+      if (frame <= totalFrames) requestAnimationFrame(step);
+      else el.textContent = original;
+    }
+    el.classList.add('scrambling');
+    step();
+    setTimeout(() => el.classList.remove('scrambling'), totalFrames * 30);
+  }
+
+  function initScramble() {
+    const targets = document.querySelectorAll(
+      '.nav__links a:not(.nav__cta), .footer__nav a, .tag, .work__cat, .diff__num, .process__num, .package__tier, .footer__social a'
+    );
+    targets.forEach(t => {
+      t.addEventListener('mouseenter', () => scramble(t));
     });
   }
 
-  /* ----- CONTACT FORM ----- */
+  /* ---------- Contact Form ---------- */
   function initForm() {
-    var form = document.getElementById('contactForm');
+    const form = document.querySelector('.contact__form');
     if (!form) return;
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', e => {
       e.preventDefault();
-      var btn = form.querySelector('button[type="submit"]');
-      btn.textContent = 'Message Sent ✓';
-      btn.style.pointerEvents = 'none';
-      btn.style.background = 'rgba(108,92,231,0.2)';
-      setTimeout(function () {
+      const btn = form.querySelector('.btn');
+      if (btn) {
+        btn.textContent = 'Message Sent';
+        btn.style.background = '#00b894';
+      }
+      setTimeout(() => {
         form.reset();
-        btn.innerHTML = 'Send Message <span class="btn__arrow">&rarr;</span>';
-        btn.style.pointerEvents = '';
-        btn.style.background = '';
+        if (btn) {
+          btn.innerHTML = 'Send Message <span class="btn__arrow">&rarr;</span>';
+          btn.style.background = '';
+        }
       }, 3000);
     });
   }
 
-  /* ----- INIT ----- */
-  function init() {
-    // enable smooth scroll: fix body, overflow handled by CSS
-    body.style.overflow = 'visible';    // allow native scroll for the height
-    wrapper.style.position = 'fixed';
-    wrapper.style.top = '0';
-    wrapper.style.left = '0';
-    wrapper.style.width = '100%';
-    wrapper.style.height = '100%';
-    wrapper.style.overflow = 'hidden';
-
+  /* ---------- Init ---------- */
+  function initAfterLoad() {
+    parallaxEls = document.querySelectorAll('[data-speed]');
     setBodyHeight();
-    cacheParallax();
-    initGradientText();
     smoothScroll();
-
-    initRocket();
-    initReveals();
-    initLineReveals();
-    initHero();
     initStarfield();
     initCursor();
+    initReveals();
     initNav();
     initAnchors();
-    initForm();
     initScramble();
-    initPreloader();
+    initForm();
+  }
 
-    // recalc on resize
-    window.addEventListener('resize', function () {
+  /* ---------- Resize ---------- */
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
       wh = window.innerHeight;
       ww = window.innerWidth;
       setBodyHeight();
-      cacheParallax();
-      if (rocketSection) rocketZoneEnd = rocketSection.offsetHeight - wh;
-    });
-  }
-
-  // wait for DOM
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
+      resizeCanvas();
+    }, 150);
+  });
 })();

@@ -35,8 +35,7 @@
   const zoomSection = document.querySelector('.zoom-intro');
   const zoomText = document.getElementById('zoomText');
   const zoomHint = document.getElementById('zoomHint');
-  const rocketRide = document.getElementById('rocketRide');
-  const rocketShip = document.getElementById('rocketShip');
+  const scrubSection = document.getElementById('scrollStatement');
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -84,34 +83,54 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Rocket ride — scroll-scrubbed rocket flying across viewport (like a video)
-    if (rocketRide && rocketShip) {
-      var rTop = rocketRide.offsetTop;
-      var rH = rocketRide.offsetHeight - wh;
-      var rp = Math.max(0, Math.min(1, (current - rTop) / rH));
+    // Scroll-scrubbed text reveal (champions4good style)
+    if (scrubSection && scrubLines.length) {
+      var sTop = scrubSection.offsetTop;
+      var scrollStart = sTop - wh;
+      var scrollEnd = sTop - wh * 0.2;
+      var sp = Math.max(0, Math.min(1, (current - scrollStart) / (scrollEnd - scrollStart)));
 
-      if (rp > 0 && rp < 1) {
-        // Horizontal: enter from right off-screen, exit left off-screen
-        // Rocket center goes from ww + 250 to -250
-        var rx = ww + 250 - (ww + 500) * rp;
-        // Vertical: slight rise from 65% viewport height to 35%
-        var ry = wh * (0.65 - 0.3 * rp);
+      scrubLines.forEach(function(line, li) {
+        var lineStart = li * 0.12;
+        var isGradient = line.classList.contains('scrub-line--gradient');
 
-        // Fade in/out at edges
-        var opacity = 1;
-        if (rp < 0.08) opacity = rp / 0.08;
-        else if (rp > 0.92) opacity = (1 - rp) / 0.08;
+        if (isGradient) {
+          // Animate gradient line as one unit
+          var lEnd = lineStart + 0.55;
+          var lp = Math.max(0, Math.min(1, (sp - lineStart) / (lEnd - lineStart)));
+          var eased = 1 - Math.pow(1 - lp, 3);
+          var lx = 80 * (1 - eased);
+          var lSkew = -14 * (1 - eased);
+          line.style.transform = 'translateX(' + lx + 'px) skewX(' + lSkew + 'deg)';
+          line.style.opacity = Math.min(1, lp * 2.5);
+        } else {
+          var chars = line._chars;
+          if (!chars || !chars.length) return;
+          for (var ci = 0; ci < chars.length; ci++) {
+            var charStart = lineStart + (ci / chars.length) * 0.15;
+            var charEnd = charStart + 0.5;
+            var cp = Math.max(0, Math.min(1, (sp - charStart) / (charEnd - charStart)));
+            var e3 = 1 - Math.pow(1 - cp, 3);
+            var cx = 80 * (1 - e3);
+            var cSkew = -14 * (1 - e3);
+            var cScaleY = 0.95 + 0.05 * e3;
+            var cOpacity = Math.min(1, cp * 2.5);
+            chars[ci].style.transform = 'translateX(' + cx + 'px) skewX(' + cSkew + 'deg) scaleY(' + cScaleY + ')';
+            chars[ci].style.opacity = cOpacity;
+          }
+        }
+      });
 
-        // Slight tilt — nose pointing up-left
-        var angle = -25;
-
-        rocketShip.style.left = rx + 'px';
-        rocketShip.style.top = ry + 'px';
-        rocketShip.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
-        rocketShip.style.opacity = opacity;
-      } else {
-        rocketShip.style.opacity = 0;
-      }
+      // Sticker reveals
+      scrubStickers.forEach(function(sticker, i) {
+        var sDelay = 0.35 + i * 0.15;
+        var stP = Math.max(0, Math.min(1, (sp - sDelay) / 0.4));
+        var sEased = 1 - Math.pow(1 - stP, 3);
+        var rotY = -40 * (1 - sEased);
+        var sScale = 1.35 - 0.35 * sEased;
+        sticker.style.transform = 'perspective(1000px) rotateY(' + rotY + 'deg) scale(' + sScale + ')';
+        sticker.style.opacity = sEased;
+      });
     }
 
     requestAnimationFrame(smoothScroll);
@@ -119,6 +138,35 @@
 
   /* ---------- Parallax ---------- */
   let parallaxEls = [];
+  let scrubLines = [];
+  let scrubStickers = [];
+
+  /* ---------- Scroll-scrubbed text splitting ---------- */
+  function initScrubText() {
+    var lines = document.querySelectorAll('[data-scrub-line]');
+    scrubLines = [];
+    lines.forEach(function(line) {
+      // Don't split gradient lines (animate as unit)
+      if (line.classList.contains('scrub-line--gradient')) {
+        line._chars = null;
+        scrubLines.push(line);
+        return;
+      }
+      var text = line.textContent;
+      var html = '';
+      for (var i = 0; i < text.length; i++) {
+        if (text[i] === ' ') {
+          html += '<span class="scrub-char">\u00A0</span>';
+        } else {
+          html += '<span class="scrub-char">' + text[i] + '</span>';
+        }
+      }
+      line.innerHTML = html;
+      line._chars = line.querySelectorAll('.scrub-char');
+      scrubLines.push(line);
+    });
+    scrubStickers = document.querySelectorAll('[data-scroll-sticker]');
+  }
 
   /* ---------- Mouse-driven gradient hue ---------- */
   let mouseX = 0.5, mouseY = 0.5;
@@ -360,6 +408,7 @@
   function initAfterLoad() {
     parallaxEls = document.querySelectorAll('[data-speed]');
     setBodyHeight();
+    initScrubText();
     smoothScroll();
     initStarfield();
     initCursor();

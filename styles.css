@@ -466,41 +466,71 @@ body.cursor-text .cursor__ring {
 }
 
 /* ============================================
-   ROCKET RIDE TRANSITION
+   SCROLL-SCRUBBED STATEMENT
    ============================================ */
-.rocket-ride {
-  height: 350vh;
+.scroll-statement {
+  padding: 220px 0 180px;
   position: relative;
-  z-index: 2;
-  pointer-events: none;
+  overflow: hidden;
+}
+.scroll-statement__inner {
+  position: relative;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+.scrub-line {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fff;
+  letter-spacing: -3px;
+  margin-bottom: 4px;
+  overflow: hidden;
+}
+.scrub-line--accent {
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  font-weight: 300;
+  color: var(--text-dim);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  margin: 20px 0;
+}
+.scrub-line--gradient {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.scrub-char {
+  display: inline-block;
+  will-change: transform, opacity;
 }
 
-/* Fixed ship — lives outside smooth-wrapper, viewport-relative */
-.rocket-ship-fixed {
-  position: fixed;
-  width: min(60vw, 500px);
-  pointer-events: none;
-  z-index: 100;
+/* Sticker accent blocks */
+.scroll-sticker {
+  position: absolute;
+  border-radius: 6px;
   opacity: 0;
   will-change: transform, opacity;
-  filter: drop-shadow(0 0 60px rgba(108,92,231,0.5)) drop-shadow(0 0 120px rgba(108,92,231,0.2));
+  pointer-events: none;
 }
-.rocket-ship-fixed svg {
-  width: 100%;
-  height: auto;
-  display: block;
+.scroll-sticker--purple {
+  width: 70px; height: 30px;
+  background: var(--accent);
+  top: 12%; right: 12%;
 }
-.rocket-ride__flame {
-  transform-origin: center top;
-  animation: rideFlameFlicker 0.12s infinite alternate;
+.scroll-sticker--teal {
+  width: 55px; height: 24px;
+  background: #00cec9;
+  top: 58%; left: 8%;
 }
-.rocket-ride__flame-in {
-  transform-origin: center top;
-  animation: rideFlameFlicker 0.12s infinite alternate-reverse;
-}
-@keyframes rideFlameFlicker {
-  0%   { transform: scaleX(1) scaleY(1); }
-  100% { transform: scaleX(0.9) scaleY(1.08); }
+.scroll-sticker--warm {
+  width: 60px; height: 28px;
+  background: #ffeaa7;
+  bottom: 18%; right: 18%;
 }
 
 /* ============================================
@@ -528,24 +558,7 @@ body.cursor-text .cursor__ring {
 /* ============================================
    THE DIFFERENCE
    ============================================ */
-.difference { padding: 200px 0; }
-
-.diff__statement {
-  text-align: center; margin-bottom: 120px;
-}
-.diff__line {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 7vw, 6rem);
-  font-weight: 700; line-height: 1.1;
-  color: #fff; letter-spacing: -2px;
-  margin-bottom: 8px;
-}
-.diff__line--accent {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: 300; color: var(--text-dim);
-  letter-spacing: 8px; text-transform: uppercase;
-  margin: 16px 0;
-}
+.difference { padding: 80px 0 200px; }
 
 .diff__grid {
   display: grid;
@@ -929,8 +942,9 @@ body.cursor-text .cursor__ring {
 
   .hero__title { font-size: clamp(2.5rem, 11vw, 4rem); }
 
-  .diff__line { font-size: clamp(2rem, 9vw, 3.5rem); }
-  .diff__line--accent { font-size: clamp(1.2rem, 4vw, 1.5rem); }
+  .scrub-line { font-size: clamp(2.2rem, 9vw, 4rem); letter-spacing: -1px; }
+  .scrub-line--accent { font-size: clamp(1.2rem, 4vw, 1.5rem); }
+  .scroll-sticker { display: none; }
 
   .features__grid { grid-template-columns: 1fr; }
   .work__grid { grid-template-columns: 1fr; }

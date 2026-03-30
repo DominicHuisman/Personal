@@ -56,6 +56,10 @@
   var stackCards = [];
   var stackCardTops = [];
   var stackSectionTop = 0;
+  var showcaseText = null;
+  var showcaseMockup = null;
+  var showcaseSection = null;
+  var showcaseSectionTop = 0;
 
   /* ---------- Helpers ---------- */
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -172,42 +176,22 @@
       }
     }
 
-    /* 5) Stacking cards — pin each card as it reaches the top */
-    if (stackCards.length > 0) {
-      var stickyStart = 80; // px from viewport top where first card pins
-      var stickyGap = 24;   // offset between stacked cards
+    /* 5) Showcase — scroll-driven reveal */
+    if (showcaseSection) {
+      var scTop = showcaseSectionTop - wh * 0.75;
+      var scP = Math.max(0, Math.min(1, (current - scTop) / (wh * 0.5)));
+      if (scP > 0 && showcaseText && !showcaseText.classList.contains('in-view')) {
+        showcaseText.classList.add('in-view');
+      }
+      if (scP > 0.1 && showcaseMockup && !showcaseMockup.classList.contains('in-view')) {
+        showcaseMockup.classList.add('in-view');
+      }
 
-      for (var sti = 0; sti < stackCards.length; sti++) {
-        var sc = stackCards[sti];
-        var cardTop = stackCardTops[sti]; // natural offset in content
-        var stickyPos = stickyStart + sti * stickyGap;
-
-        // Where this card naturally sits relative to viewport
-        var naturalScreenY = cardTop - current;
-
-        // If natural position is above its sticky point, push it down (pin it)
-        if (naturalScreenY < stickyPos) {
-          var pushDown = stickyPos - naturalScreenY;
-          sc.style.transform = 'translateY(' + pushDown + 'px)';
-          sc.style.zIndex = 10 + sti;
-
-          // Scale/dim cards that are buried under later pinned cards
-          var buried = 0;
-          for (var stj = sti + 1; stj < stackCards.length; stj++) {
-            var njTop = stackCardTops[stj] - current;
-            var njSticky = stickyStart + stj * stickyGap;
-            if (njTop < njSticky) buried++;
-          }
-          var scaleVal = Math.max(0.92, 1 - buried * 0.02);
-          var brightnessVal = Math.max(0.5, 1 - buried * 0.1);
-          sc.querySelector('.stack-card__inner').style.transform = 'scale(' + scaleVal + ')';
-          sc.querySelector('.stack-card__inner').style.filter = 'brightness(' + brightnessVal + ')';
-        } else {
-          sc.style.transform = 'translateY(0)';
-          sc.style.zIndex = 10 + sti;
-          sc.querySelector('.stack-card__inner').style.transform = '';
-          sc.querySelector('.stack-card__inner').style.filter = '';
-        }
+      // Parallax: bg moves slower, mockup drifts subtly
+      var scBg = showcaseSection.querySelector('.showcase__bg');
+      if (scBg) {
+        var bgShift = (current - showcaseSectionTop) * 0.15;
+        scBg.style.transform = 'translateY(' + bgShift + 'px)';
       }
     }
 
@@ -720,15 +704,13 @@
     }
   }
 
-  /* ---------- Stacking Cards Init ---------- */
-  function initStackCards() {
-    var container = document.getElementById('stackCards');
-    if (!container) return;
-    stackCards = Array.from(container.querySelectorAll('[data-stack-card]'));
-    stackCardTops = [];
-    for (var i = 0; i < stackCards.length; i++) {
-      stackCardTops.push(getOffsetTop(stackCards[i]));
-    }
+  /* ---------- Showcase Init ---------- */
+  function initShowcase() {
+    showcaseSection = document.querySelector('.showcase');
+    if (!showcaseSection) return;
+    showcaseText = showcaseSection.querySelector('[data-showcase-text]');
+    showcaseMockup = showcaseSection.querySelector('[data-showcase-mockup]');
+    showcaseSectionTop = getOffsetTop(showcaseSection);
   }
 
   /* ---------- Init ---------- */
@@ -739,7 +721,7 @@
     initScrollAnimations();
     initCardDeck();
     initPortfolioGlow();
-    initStackCards();
+    initShowcase();
     smoothScroll();
     initStarfield();
     initCursor();
@@ -772,10 +754,9 @@
       for (var m = 0; m < splitWordSections.length; m++) {
         splitWordSections[m].top = getOffsetTop(splitWordSections[m].el);
       }
-      // Recalculate stack cards
-      stackCardTops = [];
-      for (var sci = 0; sci < stackCards.length; sci++) {
-        stackCardTops.push(getOffsetTop(stackCards[sci]));
+      // Recalculate showcase
+      if (showcaseSection) {
+        showcaseSectionTop = getOffsetTop(showcaseSection);
       }
     }, 150);
   });

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -288,77 +288,71 @@
       </section>
 
       <!-- ============================
-           WHAT YOU GET — STACKING CARDS
+           WHAT YOU GET — CINEMATIC REVEAL
            ============================ -->
-      <section class="section stack-section" id="features" data-scroll-section>
-        <div class="container">
-          <p class="tag scroll-fade-up">[ What You Get ]</p>
-          <h2 class="section-title scroll-fade-up" data-split-words>Everything you need to <span class="gradient-text">win online.</span></h2>
-        </div>
-        <div class="stack-cards" id="stackCards">
-          <div class="stack-card" data-stack-card>
-            <div class="stack-card__inner">
-              <div class="stack-card__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <section class="section showcase" id="features" data-scroll-section>
+        <div class="showcase__bg" data-speed="-0.15"></div>
+        <div class="container showcase__grid">
+          <!-- LEFT: Text -->
+          <div class="showcase__text" data-showcase-text>
+            <p class="tag showcase__tag">[ What You Get ]</p>
+            <h2 class="showcase__headline">Everything you need to <span class="gradient-text">win online.</span></h2>
+            <p class="showcase__desc">We handle design, development, automation, and growth — so you can focus on running your business.</p>
+            <div class="showcase__stats">
+              <div class="showcase__stat">
+                <span class="showcase__stat-num">5x</span>
+                <span class="showcase__stat-label">Average ROI</span>
               </div>
-              <div class="stack-card__content">
-                <h3>Custom Websites</h3>
-                <p>Hand-coded, fast, and designed to convert visitors into customers.</p>
+              <div class="showcase__stat">
+                <span class="showcase__stat-num">60%</span>
+                <span class="showcase__stat-label">More Conversions</span>
               </div>
-            </div>
-          </div>
-          <div class="stack-card" data-stack-card>
-            <div class="stack-card__inner">
-              <div class="stack-card__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-              </div>
-              <div class="stack-card__content">
-                <h3>Business Automation</h3>
-                <p>Systems that run 24/7 so you can focus on what matters.</p>
+              <div class="showcase__stat">
+                <span class="showcase__stat-num">24/7</span>
+                <span class="showcase__stat-label">Automation</span>
               </div>
             </div>
           </div>
-          <div class="stack-card" data-stack-card>
-            <div class="stack-card__inner">
-              <div class="stack-card__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              </div>
-              <div class="stack-card__content">
-                <h3>Lead Generation</h3>
-                <p>Funnels and systems engineered to bring you qualified leads daily.</p>
-              </div>
-            </div>
-          </div>
-          <div class="stack-card" data-stack-card>
-            <div class="stack-card__inner">
-              <div class="stack-card__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-              </div>
-              <div class="stack-card__content">
-                <h3>Branding &amp; Positioning</h3>
-                <p>Make your business look as powerful as it actually is.</p>
-              </div>
-            </div>
-          </div>
-          <div class="stack-card" data-stack-card>
-            <div class="stack-card__inner">
-              <div class="stack-card__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              </div>
-              <div class="stack-card__content">
-                <h3>Conversion Optimization</h3>
-                <p>Every click, scroll, and interaction designed to drive results.</p>
-              </div>
-            </div>
-          </div>
-          <div class="stack-card" data-stack-card>
-            <div class="stack-card__inner">
-              <div class="stack-card__icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
-              </div>
-              <div class="stack-card__content">
-                <h3>Growth Marketing</h3>
-                <p>Paid ads, SEO, and strategies that compound month over month.</p>
+          <!-- RIGHT: UI Mockup -->
+          <div class="showcase__mockup" data-showcase-mockup>
+            <div class="showcase__device">
+              <div class="showcase__screen">
+                <div class="showcase__ui-card showcase__ui-card--1" data-showcase-card>
+                  <div class="showcase__ui-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                  </div>
+                  <div><strong>Custom Websites</strong><span>Hand-coded &amp; conversion-optimized</span></div>
+                </div>
+                <div class="showcase__ui-card showcase__ui-card--2" data-showcase-card>
+                  <div class="showcase__ui-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <div><strong>Automation</strong><span>Systems that run 24/7</span></div>
+                </div>
+                <div class="showcase__ui-card showcase__ui-card--3" data-showcase-card>
+                  <div class="showcase__ui-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </div>
+                  <div><strong>Lead Generation</strong><span>Qualified leads, daily</span></div>
+                </div>
+                <div class="showcase__ui-card showcase__ui-card--4" data-showcase-card>
+                  <div class="showcase__ui-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <div><strong>Conversion Optimization</strong><span>Every interaction drives results</span></div>
+                </div>
+                <div class="showcase__ui-card showcase__ui-card--5" data-showcase-card>
+                  <div class="showcase__ui-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+                  </div>
+                  <div><strong>Growth Marketing</strong><span>Paid ads, SEO &amp; compound growth</span></div>
+                </div>
+                <div class="showcase__ui-card showcase__ui-card--6" data-showcase-card>
+                  <div class="showcase__ui-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                  </div>
+                  <div><strong>Branding</strong><span>Look as powerful as you are</span></div>
+                </div>
               </div>
             </div>
           </div>
@@ -478,6 +472,6 @@
     </div><!-- /smooth-content -->
   </div><!-- /smooth-wrapper -->
 
-  <script src="script.js?v=3"></script>
+  <script src="script.js?v=4"></script>
 </body>
 </html>

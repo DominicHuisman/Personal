@@ -466,6 +466,37 @@ body.cursor-text .cursor__ring {
 }
 
 /* ============================================
+   TRANSITION STAR (scroll-driven)
+   ============================================ */
+.transition-star {
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+.transition-star__head {
+  width: 6px; height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow:
+    0 0 12px 4px rgba(162,155,254,0.7),
+    0 0 40px 8px rgba(108,92,231,0.4);
+  position: relative;
+  z-index: 2;
+}
+.transition-star__trail {
+  position: absolute;
+  top: 50%; right: 100%;
+  width: 200px; height: 2px;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg, transparent, rgba(162,155,254,0.15) 30%, rgba(162,155,254,0.6));
+  border-radius: 2px;
+  z-index: 1;
+}
+
+/* ============================================
    MARQUEE
    ============================================ */
 .marquee {

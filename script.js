@@ -35,6 +35,7 @@
   const zoomSection = document.querySelector('.zoom-intro');
   const zoomText = document.getElementById('zoomText');
   const zoomHint = document.getElementById('zoomHint');
+  const transitionStar = document.getElementById('transitionStar');
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -81,6 +82,49 @@
 
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
+
+    // Transition star between hero and difference
+    if (transitionStar) {
+      var heroEl = document.getElementById('hero');
+      var diffEl = document.getElementById('difference');
+      if (heroEl && diffEl) {
+        var starStart = heroEl.offsetTop + heroEl.offsetHeight * 0.6;
+        var starEnd = diffEl.offsetTop + wh * 0.3;
+        var starRange = starEnd - starStart;
+        var sp = (current - starStart) / starRange;
+        sp = Math.max(0, Math.min(1, sp));
+
+        if (sp > 0 && sp < 1) {
+          // Ease in-out cubic
+          var ep = sp < 0.5 ? 4 * sp * sp * sp : 1 - Math.pow(-2 * sp + 2, 3) / 2;
+          // Sweep from right to left, with a diagonal arc
+          var startX = ww + 50;
+          var endX = -250;
+          var sx = startX + (endX - startX) * ep;
+          // Arc: peak in middle of screen vertically
+          var midY = wh * 0.45;
+          var startY = wh * 0.8;
+          var endY = wh * 0.15;
+          var sy;
+          if (sp < 0.5) {
+            sy = startY + (midY - startY) * (sp / 0.5);
+          } else {
+            sy = midY + (endY - midY) * ((sp - 0.5) / 0.5);
+          }
+          // Angle towards movement direction
+          var angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+          // Fade: appear fast, hold, disappear at end
+          var starOpacity = 1;
+          if (sp < 0.08) starOpacity = sp / 0.08;
+          else if (sp > 0.85) starOpacity = (1 - sp) / 0.15;
+
+          transitionStar.style.opacity = starOpacity;
+          transitionStar.style.transform = 'translate(' + sx + 'px,' + sy + 'px) rotate(' + angle + 'deg)';
+        } else {
+          transitionStar.style.opacity = 0;
+        }
+      }
+    }
 
     requestAnimationFrame(smoothScroll);
   }

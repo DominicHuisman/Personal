@@ -37,7 +37,6 @@
   const zoomHint = document.getElementById('zoomHint');
   const rocketRide = document.getElementById('rocketRide');
   const rocketShip = document.getElementById('rocketShip');
-  const rocketTrail = document.getElementById('rocketTrail');
   const rocketLabel = document.getElementById('rocketLabel');
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
@@ -86,47 +85,56 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Rocket ride transition
+    // Rocket ride transition — full-screen zoom
     if (rocketRide && rocketShip) {
       var rTop = rocketRide.offsetTop;
       var rH = rocketRide.offsetHeight - wh;
       var rp = Math.max(0, Math.min(1, (current - rTop) / rH));
 
       if (rp > 0 && rp < 1) {
-        // Rocket flies from below screen to above screen
-        // Start: bottom=-180 (below viewport) → End: bottom = wh + 200 (above viewport)
-        var totalTravel = wh + 380;
-        // Ease: slow start, fast middle, slow end
-        var ep = rp < 0.5
-          ? 2 * rp * rp
-          : 1 - Math.pow(-2 * rp + 2, 2) / 2;
-        var rocketY = -180 + ep * totalTravel;
-        rocketShip.style.bottom = rocketY + 'px';
+        /*
+          Phase 1 (0 → 0.4): Rocket visible, starts at scale 1, slowly grows
+                              Label shows briefly
+          Phase 2 (0.4 → 0.75): Rocket scales up massively, body fills viewport
+                                 Like zooming INTO the rocket
+          Phase 3 (0.75 → 1.0): Screen is fully dark (rocket body = bg color)
+                                 Opacity fades to 0, revealing next section
+        */
+        var scale, opacity;
 
-        // Trail grows from bottom, follows the rocket
-        var trailHeight = Math.min(rocketY + 180, wh * 1.5);
-        if (trailHeight < 0) trailHeight = 0;
-        if (rocketTrail) {
-          rocketTrail.style.height = trailHeight + 'px';
+        if (rp < 0.4) {
+          // Gentle grow — 1x to 3x
+          var p1 = rp / 0.4;
+          scale = 1 + p1 * p1 * 2;
+          opacity = 1;
+        } else if (rp < 0.75) {
+          // Explosive zoom — 3x to 60x (body fills entire screen)
+          var p2 = (rp - 0.4) / 0.35;
+          var ep2 = p2 * p2 * p2; // cubic ease-in for acceleration feel
+          scale = 3 + ep2 * 57;
+          opacity = 1;
+        } else {
+          // Hold at max scale, fade out
+          var p3 = (rp - 0.75) / 0.25;
+          scale = 60;
+          opacity = 1 - p3;
         }
 
-        // Slight horizontal wobble for life
-        var wobble = Math.sin(rp * Math.PI * 6) * 8;
-        rocketShip.style.transform = 'translateX(calc(-50% + ' + wobble + 'px))';
+        rocketShip.style.transform = 'scale(' + scale + ')';
+        rocketShip.style.opacity = opacity;
 
-        // Label fades in briefly at 10-30%
+        // Label visible only in phase 1
         if (rocketLabel) {
-          if (rp > 0.05 && rp < 0.3) {
-            var lp = rp < 0.15 ? (rp - 0.05) / 0.1 : (0.3 - rp) / 0.15;
-            rocketLabel.style.opacity = Math.max(0, lp);
+          if (rp > 0.02 && rp < 0.3) {
+            var lp = rp < 0.1 ? (rp - 0.02) / 0.08 : (0.3 - rp) / 0.2;
+            rocketLabel.style.opacity = Math.max(0, Math.min(1, lp));
           } else {
             rocketLabel.style.opacity = 0;
           }
         }
       } else {
-        rocketShip.style.bottom = '-180px';
-        rocketShip.style.transform = 'translateX(-50%)';
-        if (rocketTrail) rocketTrail.style.height = '0';
+        rocketShip.style.transform = 'scale(1)';
+        rocketShip.style.opacity = rp >= 1 ? 0 : 1;
         if (rocketLabel) rocketLabel.style.opacity = 0;
       }
     }

@@ -469,7 +469,7 @@ body.cursor-text .cursor__ring {
    ROCKET RIDE TRANSITION
    ============================================ */
 .rocket-ride {
-  height: 250vh;
+  height: 300vh;
   position: relative;
   z-index: 2;
 }
@@ -481,25 +481,23 @@ body.cursor-text .cursor__ring {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: var(--bg);
 }
 .rocket-ride__ship {
-  width: 120px;
-  position: absolute;
-  bottom: -180px;
-  left: 50%;
-  transform: translateX(-50%);
-  will-change: transform;
-  z-index: 3;
+  width: 160px;
+  will-change: transform, opacity;
+  transform-origin: center center;
 }
 .rocket-ride__ship svg {
   width: 100%;
   height: auto;
+  display: block;
 }
 .rocket-ride__flame {
   transform-origin: center top;
   animation: rideFlameFlicker 0.12s infinite alternate;
 }
-.rocket-ride__flame-inner {
+.rocket-ride__flame-in {
   transform-origin: center top;
   animation: rideFlameFlicker 0.12s infinite alternate-reverse;
 }
@@ -507,33 +505,13 @@ body.cursor-text .cursor__ring {
   0%   { transform: scaleX(1) scaleY(1); }
   100% { transform: scaleX(0.9) scaleY(1.08); }
 }
-.rocket-ride__trail {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  width: 4px;
-  height: 0;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    to top,
-    transparent,
-    rgba(108,92,231,0.05) 10%,
-    rgba(108,92,231,0.15) 30%,
-    rgba(162,155,254,0.25) 60%,
-    rgba(108,92,231,0.1) 90%,
-    transparent
-  );
-  border-radius: 4px;
-  will-change: height;
-  z-index: 1;
-}
 .rocket-ride__label {
   position: absolute;
-  bottom: 15%;
+  bottom: 18%;
   left: 50%;
   transform: translateX(-50%);
   font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   font-weight: 500;
   letter-spacing: 4px;
   text-transform: uppercase;
@@ -541,6 +519,7 @@ body.cursor-text .cursor__ring {
   opacity: 0;
   white-space: nowrap;
   z-index: 2;
+  transition: opacity 0.3s;
 }
 
 /* ============================================

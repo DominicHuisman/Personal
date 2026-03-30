@@ -32,9 +32,9 @@
   const content = document.getElementById('smooth-content');
   const nav = document.querySelector('.nav');
   const hero = document.querySelector('.hero');
-  const rocketSection = document.querySelector('.rocket-intro');
-  const rocketSvg = document.querySelector('.rocket-intro__svg');
-  const rocketHint = document.querySelector('.rocket-intro__hint');
+  const zoomSection = document.querySelector('.zoom-intro');
+  const zoomText = document.getElementById('zoomText');
+  const zoomHint = document.getElementById('zoomHint');
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -66,20 +66,17 @@
       el.style.transform = 'translate3d(0,' + y + 'px,0)';
     });
 
-    // Rocket
-    if (rocketSection && rocketSvg) {
-      const rocketTop = rocketSection.offsetTop;
-      const rocketH = rocketSection.offsetHeight - wh;
-      const rocketProgress = Math.max(0, Math.min(1, (current - rocketTop) / rocketH));
-      const expScale = 1 + (Math.pow(rocketProgress, 2) * 49);
-      rocketSvg.style.transform = 'scale(' + expScale + ')';
-      const fadeStart = 0.45;
-      const rocketOpacity = rocketProgress > fadeStart
-        ? 1 - ((rocketProgress - fadeStart) / (0.55))
-        : 1;
-      rocketSvg.style.opacity = Math.max(0, rocketOpacity);
-      if (rocketHint) rocketHint.style.opacity = rocketProgress > 0.1 ? 0 : 1;
-      if (nav) nav.style.opacity = rocketProgress > 0.05 ? 0 : 1;
+    // Text zoom intro
+    if (zoomSection && zoomText) {
+      const zTop = zoomSection.offsetTop;
+      const zH = zoomSection.offsetHeight - wh;
+      const p = Math.max(0, Math.min(1, (current - zTop) / zH));
+      const scale = 1 + p * p * 30;
+      const opacity = p > 0.4 ? 1 - ((p - 0.4) / 0.4) : 1;
+      zoomText.style.transform = 'scale(' + scale + ')';
+      zoomText.style.opacity = Math.max(0, opacity);
+      if (zoomHint) zoomHint.style.opacity = p > 0.08 ? 0 : 1;
+      if (nav) nav.style.opacity = p > 0.05 ? 0 : 1;
     }
 
     // Gradient text hue (mouse-driven, see mousemove)

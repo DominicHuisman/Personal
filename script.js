@@ -52,8 +52,8 @@
 
   function updateGradientText() {
     if (!gradientEls.length) return;
-    // map mouse X to hue range: 220 (blue-violet) → 340 (through teal/green)
-    var targetHue = 220 + mouseXTarget * 120;
+    // map mouse X to hue range: 220 (blue) → 280 (purple)
+    var targetHue = 220 + mouseXTarget * 60;
     hueSmooth += (targetHue - hueSmooth) * hueLerp;
     for (var i = 0; i < gradientEls.length; i++) {
       gradientEls[i].style.setProperty('--hue', hueSmooth);

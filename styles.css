@@ -254,12 +254,17 @@ body.cursor-text .cursor__ring {
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #6c5ce7, #00cec9, #a29bfe, #ff6b6b, #6c5ce7, #00cec9, #a29bfe);
-  background-size: 400% 100%;
+  --hue: 260;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--hue), 70%, 65%),
+    hsl(calc(var(--hue) + 40), 70%, 65%),
+    hsl(calc(var(--hue) + 80), 70%, 70%)
+  );
+  background-size: 100% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  background-position: 0% 50%;
 }
 
 .tag {

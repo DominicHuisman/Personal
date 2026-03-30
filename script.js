@@ -40,28 +40,23 @@
   /* ----- MOUSE-DRIVEN GRADIENT TEXT ----- */
   var gradientEls = [];
   var mouseXTarget = 0;
-  var mouseYTarget = 0;
-  var mouseXSmooth = 0;
-  var mouseYSmooth = 0;
-  var gradientLerp = 0.035; // slow, buttery interpolation
+  var hueSmooth = 260; // starting hue
+  var hueLerp = 0.02;  // very slow blend
 
   function initGradientText() {
     gradientEls = document.querySelectorAll('.gradient-text');
     document.addEventListener('mousemove', function (e) {
       mouseXTarget = e.clientX / ww;  // 0 → 1
-      mouseYTarget = e.clientY / wh;  // 0 → 1
     });
   }
 
   function updateGradientText() {
     if (!gradientEls.length) return;
-    // lerp toward target
-    mouseXSmooth += (mouseXTarget - mouseXSmooth) * gradientLerp;
-    mouseYSmooth += (mouseYTarget - mouseYSmooth) * gradientLerp;
-    var posX = mouseXSmooth * 200;
-    var posY = mouseYSmooth * 100;
+    // map mouse X to hue range: 220 (blue-violet) → 340 (through teal/green)
+    var targetHue = 220 + mouseXTarget * 120;
+    hueSmooth += (targetHue - hueSmooth) * hueLerp;
     for (var i = 0; i < gradientEls.length; i++) {
-      gradientEls[i].style.backgroundPosition = posX + '% ' + posY + '%';
+      gradientEls[i].style.setProperty('--hue', hueSmooth);
     }
   }
 

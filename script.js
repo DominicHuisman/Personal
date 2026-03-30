@@ -71,11 +71,11 @@
       const rocketTop = rocketSection.offsetTop;
       const rocketH = rocketSection.offsetHeight - wh;
       const rocketProgress = Math.max(0, Math.min(1, (current - rocketTop) / rocketH));
-      const expScale = 1 + (Math.pow(rocketProgress, 2.5) * 49);
+      const expScale = 1 + (Math.pow(rocketProgress, 2) * 49);
       rocketSvg.style.transform = 'scale(' + expScale + ')';
-      const fadeStart = 0.6;
+      const fadeStart = 0.45;
       const rocketOpacity = rocketProgress > fadeStart
-        ? 1 - ((rocketProgress - fadeStart) / (1 - fadeStart))
+        ? 1 - ((rocketProgress - fadeStart) / (0.55))
         : 1;
       rocketSvg.style.opacity = Math.max(0, rocketOpacity);
       if (rocketHint) rocketHint.style.opacity = rocketProgress > 0.1 ? 0 : 1;

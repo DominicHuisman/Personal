@@ -139,7 +139,7 @@ body.cursor-text .cursor__ring {
    ROCKET INTRO
    ============================================ */
 .rocket-intro {
-  height: 300vh; position: relative; z-index: 2;
+  height: 200vh; position: relative; z-index: 2;
 }
 .rocket-intro__inner {
   position: sticky; top: 0; height: 100vh;
@@ -150,7 +150,8 @@ body.cursor-text .cursor__ring {
 .rocket-intro__svg {
   width: 120px; height: auto;
   will-change: transform, opacity;
-  filter: drop-shadow(0 0 40px rgba(108,92,231,0.2));
+  filter: drop-shadow(0 0 40px rgba(108,92,231,0.15));
+  transform-origin: center center;
 }
 .rocket__flame { transform-origin: center top; animation: flameFlicker 0.15s infinite alternate; }
 .rocket__flame--outer { animation-delay: 0.05s; }

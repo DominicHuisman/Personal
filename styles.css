@@ -254,10 +254,18 @@ body.cursor-text .cursor__ring {
 }
 
 .gradient-text {
-  background: var(--gradient);
+  background: linear-gradient(90deg, #6c5ce7, #00cec9, #a29bfe, #6c5ce7);
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradientFlow 4s ease infinite;
+}
+
+@keyframes gradientFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .tag {

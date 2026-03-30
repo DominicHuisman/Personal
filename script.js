@@ -35,8 +35,10 @@
   const zoomSection = document.querySelector('.zoom-intro');
   const zoomText = document.getElementById('zoomText');
   const zoomHint = document.getElementById('zoomHint');
-  const wipeStreak = document.querySelector('.section-wipe__streak');
-  const wipeFlash = document.querySelector('.section-wipe__flash');
+  const rocketRide = document.getElementById('rocketRide');
+  const rocketShip = document.getElementById('rocketShip');
+  const rocketTrail = document.getElementById('rocketTrail');
+  const rocketLabel = document.getElementById('rocketLabel');
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -84,60 +86,48 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Section wipe transition between hero and difference
-    if (wipeStreak && wipeFlash) {
-      var heroEl = document.getElementById('hero');
-      var diffEl = document.getElementById('difference');
-      if (heroEl && diffEl) {
-        // Transition zone: from 70% through hero to 20% into difference
-        var wipeStart = heroEl.offsetTop + heroEl.offsetHeight * 0.7;
-        var wipeEnd = diffEl.offsetTop + wh * 0.15;
-        var wipeRange = wipeEnd - wipeStart;
-        var wp = (current - wipeStart) / wipeRange;
-        wp = Math.max(0, Math.min(1, wp));
+    // Rocket ride transition
+    if (rocketRide && rocketShip) {
+      var rTop = rocketRide.offsetTop;
+      var rH = rocketRide.offsetHeight - wh;
+      var rp = Math.max(0, Math.min(1, (current - rTop) / rH));
 
-        if (wp > 0 && wp < 1) {
-          /*
-            Phase 1 (0 → 0.35): Streak enters from left, thin bright line sweeps across
-            Phase 2 (0.35 → 0.6): Streak thickens dramatically, screen fills with light
-            Phase 3 (0.6 → 1.0): Flash fades out, revealing next section
-          */
-          var streakOpacity, streakTranslateX, streakScaleY, flashOpacity;
+      if (rp > 0 && rp < 1) {
+        // Rocket flies from below screen to above screen
+        // Start: bottom=-180 (below viewport) → End: bottom = wh + 200 (above viewport)
+        var totalTravel = wh + 380;
+        // Ease: slow start, fast middle, slow end
+        var ep = rp < 0.5
+          ? 2 * rp * rp
+          : 1 - Math.pow(-2 * rp + 2, 2) / 2;
+        var rocketY = -180 + ep * totalTravel;
+        rocketShip.style.bottom = rocketY + 'px';
 
-          if (wp < 0.35) {
-            // Phase 1: streak sweeps in
-            var p1 = wp / 0.35;
-            var ep1 = p1 * p1; // ease-in
-            streakTranslateX = -120 + ep1 * 120; // -120% to 0%
-            streakScaleY = 1 + p1 * 3; // thin line grows slightly
-            streakOpacity = Math.min(1, p1 * 3);
-            flashOpacity = 0;
-          } else if (wp < 0.6) {
-            // Phase 2: streak expands to fill screen
-            var p2 = (wp - 0.35) / 0.25;
-            var ep2 = p2 * p2;
-            streakTranslateX = 0;
-            streakScaleY = 4 + ep2 * 600; // explodes in thickness
-            streakOpacity = 1;
-            flashOpacity = ep2 * 0.9;
-          } else {
-            // Phase 3: everything fades
-            var p3 = (wp - 0.6) / 0.4;
-            var ep3 = 1 - Math.pow(1 - p3, 2); // ease-out
-            streakTranslateX = 0;
-            streakScaleY = 604;
-            streakOpacity = 1 - ep3;
-            flashOpacity = 0.9 * (1 - ep3);
-          }
-
-          wipeStreak.style.opacity = streakOpacity;
-          wipeStreak.style.transform = 'rotate(-25deg) scaleY(' + streakScaleY + ') translateX(' + streakTranslateX + '%)';
-          wipeFlash.style.opacity = flashOpacity;
-        } else {
-          wipeStreak.style.opacity = 0;
-          wipeStreak.style.transform = 'rotate(-25deg) scaleY(0) translateX(-120%)';
-          wipeFlash.style.opacity = 0;
+        // Trail grows from bottom, follows the rocket
+        var trailHeight = Math.min(rocketY + 180, wh * 1.5);
+        if (trailHeight < 0) trailHeight = 0;
+        if (rocketTrail) {
+          rocketTrail.style.height = trailHeight + 'px';
         }
+
+        // Slight horizontal wobble for life
+        var wobble = Math.sin(rp * Math.PI * 6) * 8;
+        rocketShip.style.transform = 'translateX(calc(-50% + ' + wobble + 'px))';
+
+        // Label fades in briefly at 10-30%
+        if (rocketLabel) {
+          if (rp > 0.05 && rp < 0.3) {
+            var lp = rp < 0.15 ? (rp - 0.05) / 0.1 : (0.3 - rp) / 0.15;
+            rocketLabel.style.opacity = Math.max(0, lp);
+          } else {
+            rocketLabel.style.opacity = 0;
+          }
+        }
+      } else {
+        rocketShip.style.bottom = '-180px';
+        rocketShip.style.transform = 'translateX(-50%)';
+        if (rocketTrail) rocketTrail.style.height = '0';
+        if (rocketLabel) rocketLabel.style.opacity = 0;
       }
     }
 

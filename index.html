@@ -19,12 +19,6 @@
     <div class="cursor__label" id="cursorLabel"></div>
   </div>
 
-  <!-- SECTION TRANSITION -->
-  <div class="section-wipe" id="sectionWipe">
-    <div class="section-wipe__streak"></div>
-    <div class="section-wipe__flash"></div>
-  </div>
-
   <!-- CANVAS -->
   <canvas id="starfield"></canvas>
 
@@ -125,6 +119,42 @@
           <span>Branding</span><span class="marquee__dot">&#9670;</span>
         </div>
       </div>
+
+      <!-- ============================
+           ROCKET RIDE TRANSITION
+           ============================ -->
+      <section class="rocket-ride" id="rocketRide">
+        <div class="rocket-ride__inner">
+          <div class="rocket-ride__trail" id="rocketTrail"></div>
+          <div class="rocket-ride__ship" id="rocketShip">
+            <svg viewBox="0 0 80 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M28 120 L28 56 Q28 16 40 4 Q52 16 52 56 L52 120 Z" fill="#16163a" stroke="rgba(108,92,231,0.4)" stroke-width="0.5"/>
+              <circle cx="40" cy="56" r="8" fill="#0a0a20" stroke="rgba(162,155,254,0.5)" stroke-width="1"/>
+              <circle cx="40" cy="56" r="5" fill="rgba(108,92,231,0.3)"/>
+              <path d="M28 108 L18 128 L18 124 Q20 110 28 104 Z" fill="#12123a"/>
+              <path d="M52 108 L62 128 L62 124 Q60 110 52 104 Z" fill="#12123a"/>
+              <rect x="30" y="80" width="8" height="24" rx="2" fill="rgba(108,92,231,0.25)"/>
+              <rect x="42" y="80" width="8" height="24" rx="2" fill="rgba(108,92,231,0.25)"/>
+              <rect x="36" y="72" width="8" height="2" rx="1" fill="#6c5ce7" opacity="0.6"/>
+              <path class="rocket-ride__flame" d="M32 120 Q40 155 48 120" fill="url(#rideFlame)" opacity="0.85"/>
+              <path class="rocket-ride__flame-inner" d="M35 120 Q40 145 45 120" fill="url(#rideFlameInner)" opacity="0.9"/>
+              <defs>
+                <linearGradient id="rideFlame" x1="40" y1="120" x2="40" y2="155" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#6c5ce7"/>
+                  <stop offset="50%" stop-color="#00cec9"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </linearGradient>
+                <linearGradient id="rideFlameInner" x1="40" y1="120" x2="40" y2="145" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#fff"/>
+                  <stop offset="50%" stop-color="#a29bfe"/>
+                  <stop offset="100%" stop-color="transparent"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <p class="rocket-ride__label" id="rocketLabel">Hold on tight</p>
+        </div>
+      </section>
 
       <!-- ============================
            THE DIFFERENCE

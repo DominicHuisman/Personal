@@ -22,6 +22,46 @@
   <!-- CANVAS -->
   <canvas id="starfield"></canvas>
 
+  <!-- ROCKET SHIP (fixed, outside scroll wrapper for correct viewport positioning) -->
+  <div class="rocket-ship-fixed" id="rocketShip">
+    <svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="50" cy="190" rx="18" ry="7" fill="rgba(108,92,231,0.3)"/>
+      <path class="rocket-ride__flame" d="M38 150 Q50 200 62 150" fill="url(#rideFl)" opacity="0.8"/>
+      <path class="rocket-ride__flame-in" d="M42 150 Q50 185 58 150" fill="url(#rideFlIn)" opacity="0.9"/>
+      <path d="M35 150 L35 70 Q35 20 50 5 Q65 20 65 70 L65 150 Z" fill="url(#rideBody)"/>
+      <circle cx="50" cy="68" r="10" fill="#050510" stroke="rgba(162,155,254,0.4)" stroke-width="1"/>
+      <circle cx="50" cy="68" r="6" fill="rgba(108,92,231,0.25)"/>
+      <ellipse cx="48" cy="65" rx="2.5" ry="2" fill="rgba(255,255,255,0.1)"/>
+      <rect x="38" y="95" width="5" height="30" rx="2" fill="rgba(108,92,231,0.2)"/>
+      <rect x="57" y="95" width="5" height="30" rx="2" fill="rgba(108,92,231,0.2)"/>
+      <rect x="44" y="85" width="12" height="3" rx="1.5" fill="#6c5ce7" opacity="0.5"/>
+      <path d="M35 135 L22 158 L22 153 Q25 140 35 132 Z" fill="url(#rideFin)"/>
+      <path d="M65 135 L78 158 L78 153 Q75 140 65 132 Z" fill="url(#rideFin)"/>
+      <path d="M40 150 L38 156 L62 156 L60 150" fill="#0c0c24" stroke="rgba(108,92,231,0.2)" stroke-width="0.5"/>
+      <defs>
+        <linearGradient id="rideBody" x1="50" y1="5" x2="50" y2="150" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#1a1a45"/>
+          <stop offset="50%" stop-color="#0e0e28"/>
+          <stop offset="100%" stop-color="#050510"/>
+        </linearGradient>
+        <linearGradient id="rideFin" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#14143a"/>
+          <stop offset="100%" stop-color="#050510"/>
+        </linearGradient>
+        <linearGradient id="rideFl" x1="50" y1="150" x2="50" y2="200" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#6c5ce7"/>
+          <stop offset="50%" stop-color="#00cec9"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+        <linearGradient id="rideFlIn" x1="50" y1="150" x2="50" y2="185" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#fff"/>
+          <stop offset="50%" stop-color="#a29bfe"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+
   <!-- PRELOADER -->
   <div class="preloader" id="preloader">
     <div class="preloader__inner">
@@ -121,51 +161,9 @@
       </div>
 
       <!-- ============================
-           ROCKET RIDE TRANSITION
+           ROCKET RIDE TRANSITION (spacer only — ship is fixed outside wrapper)
            ============================ -->
-      <section class="rocket-ride" id="rocketRide">
-        <div class="rocket-ride__inner">
-          <canvas class="rocket-ride__canvas" id="rocketCanvas"></canvas>
-          <div class="rocket-ride__ship" id="rocketShip">
-            <svg viewBox="0 0 100 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <ellipse cx="50" cy="190" rx="18" ry="7" fill="rgba(108,92,231,0.3)"/>
-              <path class="rocket-ride__flame" d="M38 150 Q50 200 62 150" fill="url(#rideFl)" opacity="0.8"/>
-              <path class="rocket-ride__flame-in" d="M42 150 Q50 185 58 150" fill="url(#rideFlIn)" opacity="0.9"/>
-              <path d="M35 150 L35 70 Q35 20 50 5 Q65 20 65 70 L65 150 Z" fill="url(#rideBody)"/>
-              <circle cx="50" cy="68" r="10" fill="#050510" stroke="rgba(162,155,254,0.4)" stroke-width="1"/>
-              <circle cx="50" cy="68" r="6" fill="rgba(108,92,231,0.25)"/>
-              <ellipse cx="48" cy="65" rx="2.5" ry="2" fill="rgba(255,255,255,0.1)"/>
-              <rect x="38" y="95" width="5" height="30" rx="2" fill="rgba(108,92,231,0.2)"/>
-              <rect x="57" y="95" width="5" height="30" rx="2" fill="rgba(108,92,231,0.2)"/>
-              <rect x="44" y="85" width="12" height="3" rx="1.5" fill="#6c5ce7" opacity="0.5"/>
-              <path d="M35 135 L22 158 L22 153 Q25 140 35 132 Z" fill="url(#rideFin)"/>
-              <path d="M65 135 L78 158 L78 153 Q75 140 65 132 Z" fill="url(#rideFin)"/>
-              <path d="M40 150 L38 156 L62 156 L60 150" fill="#0c0c24" stroke="rgba(108,92,231,0.2)" stroke-width="0.5"/>
-              <defs>
-                <linearGradient id="rideBody" x1="50" y1="5" x2="50" y2="150" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#1a1a45"/>
-                  <stop offset="50%" stop-color="#0e0e28"/>
-                  <stop offset="100%" stop-color="#050510"/>
-                </linearGradient>
-                <linearGradient id="rideFin" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#14143a"/>
-                  <stop offset="100%" stop-color="#050510"/>
-                </linearGradient>
-                <linearGradient id="rideFl" x1="50" y1="150" x2="50" y2="200" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#6c5ce7"/>
-                  <stop offset="50%" stop-color="#00cec9"/>
-                  <stop offset="100%" stop-color="transparent"/>
-                </linearGradient>
-                <linearGradient id="rideFlIn" x1="50" y1="150" x2="50" y2="185" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#fff"/>
-                  <stop offset="50%" stop-color="#a29bfe"/>
-                  <stop offset="100%" stop-color="transparent"/>
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
-        </div>
-      </section>
+      <section class="rocket-ride" id="rocketRide"></section>
 
       <!-- ============================
            THE DIFFERENCE

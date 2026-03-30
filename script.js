@@ -37,8 +37,6 @@
   const zoomHint = document.getElementById('zoomHint');
   const rocketRide = document.getElementById('rocketRide');
   const rocketShip = document.getElementById('rocketShip');
-  const rocketCanvas = document.getElementById('rocketCanvas');
-  const rocketCtx = rocketCanvas ? rocketCanvas.getContext('2d') : null;
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -86,81 +84,35 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Rocket ride — diagonal flyby across full screen with trail
-    if (rocketRide && rocketShip && rocketCanvas && rocketCtx) {
+    // Rocket ride — fixed element flying diagonally across viewport
+    if (rocketRide && rocketShip) {
       var rTop = rocketRide.offsetTop;
       var rH = rocketRide.offsetHeight - wh;
       var rp = Math.max(0, Math.min(1, (current - rTop) / rH));
 
-      // Resize canvas to match viewport
-      if (rocketCanvas.width !== ww || rocketCanvas.height !== wh) {
-        rocketCanvas.width = ww;
-        rocketCanvas.height = wh;
-      }
-
-      // Clear trail canvas
-      rocketCtx.clearRect(0, 0, ww, wh);
-
       if (rp > 0 && rp < 1) {
-        // Ease-in-out for smooth movement
+        // Cubic ease-in-out
         var ep = rp < 0.5
           ? 4 * rp * rp * rp
           : 1 - Math.pow(-2 * rp + 2, 3) / 2;
 
-        // Path: bottom-right to top-left, diagonal
-        var startX = ww + 150;
-        var startY = wh + 200;
-        var endX = -350;
-        var endY = -300;
-        var rx = startX + (endX - startX) * ep;
-        var ry = startY + (endY - startY) * ep;
+        // Viewport-relative path: bottom-right corner to top-left corner
+        // Start off-screen bottom-right, end off-screen top-left
+        var rx = ww * (1.1 - 1.3 * ep);
+        var ry = wh * (1.15 - 1.4 * ep);
 
-        // Rotation: tilted along flight path (-45deg roughly, pointing up-left)
-        var angle = Math.atan2(endY - startY, endX - startX) - Math.PI / 2;
+        // Fade: appear quickly, stay visible, fade out at end
+        var opacity = 1;
+        if (rp < 0.1) opacity = rp / 0.1;
+        else if (rp > 0.85) opacity = (1 - rp) / 0.15;
 
-        // Position rocket
+        // Rotation: tilted to match diagonal flight path (nose pointing up-left)
+        var angle = -35;
+
         rocketShip.style.left = rx + 'px';
         rocketShip.style.top = ry + 'px';
-        rocketShip.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'rad)';
-        rocketShip.style.opacity = 1;
-
-        // Draw glowing trail on canvas
-        // Trail is a series of points behind the rocket
-        var trailLen = 40;
-        for (var i = 0; i < trailLen; i++) {
-          var tp = Math.max(0, ep - (i * 0.008));
-          if (tp <= 0) break;
-          var tx = startX + (endX - startX) * tp;
-          var ty = startY + (endY - startY) * tp;
-          var alpha = (1 - i / trailLen) * 0.5;
-          var radius = 3 + (1 - i / trailLen) * 4;
-          rocketCtx.beginPath();
-          rocketCtx.arc(tx, ty, radius, 0, Math.PI * 2);
-          rocketCtx.fillStyle = 'rgba(108,92,231,' + alpha + ')';
-          rocketCtx.fill();
-        }
-
-        // Draw a bright core trail (thinner, brighter)
-        var coreLen = 20;
-        for (var j = 0; j < coreLen; j++) {
-          var cp = Math.max(0, ep - (j * 0.004));
-          if (cp <= 0) break;
-          var cx2 = startX + (endX - startX) * cp;
-          var cy2 = startY + (endY - startY) * cp;
-          var ca = (1 - j / coreLen) * 0.8;
-          rocketCtx.beginPath();
-          rocketCtx.arc(cx2, cy2, 2, 0, Math.PI * 2);
-          rocketCtx.fillStyle = 'rgba(162,155,254,' + ca + ')';
-          rocketCtx.fill();
-        }
-
-        // Ambient glow around rocket position
-        var grd = rocketCtx.createRadialGradient(rx, ry, 0, rx, ry, 150);
-        grd.addColorStop(0, 'rgba(108,92,231,0.12)');
-        grd.addColorStop(1, 'transparent');
-        rocketCtx.fillStyle = grd;
-        rocketCtx.fillRect(rx - 150, ry - 150, 300, 300);
-
+        rocketShip.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
+        rocketShip.style.opacity = opacity;
       } else {
         rocketShip.style.opacity = 0;
       }

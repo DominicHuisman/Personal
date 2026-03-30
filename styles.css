@@ -472,29 +472,20 @@ body.cursor-text .cursor__ring {
   height: 350vh;
   position: relative;
   z-index: 2;
-}
-.rocket-ride__inner {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--bg);
-}
-.rocket-ride__canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-}
-.rocket-ride__ship {
-  width: 250px;
-  position: absolute;
-  will-change: transform;
-  z-index: 2;
   pointer-events: none;
 }
-.rocket-ride__ship svg {
+
+/* Fixed ship — lives outside smooth-wrapper, viewport-relative */
+.rocket-ship-fixed {
+  position: fixed;
+  width: 280px;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 40px rgba(108,92,231,0.6)) drop-shadow(0 0 80px rgba(108,92,231,0.3));
+}
+.rocket-ship-fixed svg {
   width: 100%;
   height: auto;
   display: block;

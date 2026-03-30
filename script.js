@@ -39,21 +39,27 @@
 
   /* ----- MOUSE-DRIVEN GRADIENT TEXT ----- */
   var gradientEls = [];
-  var mouseXRatio = 0;
-  var mouseYRatio = 0;
+  var mouseXTarget = 0;
+  var mouseYTarget = 0;
+  var mouseXSmooth = 0;
+  var mouseYSmooth = 0;
+  var gradientLerp = 0.035; // slow, buttery interpolation
 
   function initGradientText() {
     gradientEls = document.querySelectorAll('.gradient-text');
     document.addEventListener('mousemove', function (e) {
-      mouseXRatio = e.clientX / ww;  // 0 → 1
-      mouseYRatio = e.clientY / wh;  // 0 → 1
+      mouseXTarget = e.clientX / ww;  // 0 → 1
+      mouseYTarget = e.clientY / wh;  // 0 → 1
     });
   }
 
   function updateGradientText() {
     if (!gradientEls.length) return;
-    var posX = mouseXRatio * 300;
-    var posY = mouseYRatio * 100;
+    // lerp toward target
+    mouseXSmooth += (mouseXTarget - mouseXSmooth) * gradientLerp;
+    mouseYSmooth += (mouseYTarget - mouseYSmooth) * gradientLerp;
+    var posX = mouseXSmooth * 200;
+    var posY = mouseYSmooth * 100;
     for (var i = 0; i < gradientEls.length; i++) {
       gradientEls[i].style.backgroundPosition = posX + '% ' + posY + '%';
     }

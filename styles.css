@@ -478,12 +478,12 @@ body.cursor-text .cursor__ring {
 /* Fixed ship — lives outside smooth-wrapper, viewport-relative */
 .rocket-ship-fixed {
   position: fixed;
-  width: 280px;
+  width: min(60vw, 500px);
   pointer-events: none;
   z-index: 100;
   opacity: 0;
   will-change: transform, opacity;
-  filter: drop-shadow(0 0 40px rgba(108,92,231,0.6)) drop-shadow(0 0 80px rgba(108,92,231,0.3));
+  filter: drop-shadow(0 0 60px rgba(108,92,231,0.5)) drop-shadow(0 0 120px rgba(108,92,231,0.2));
 }
 .rocket-ship-fixed svg {
   width: 100%;

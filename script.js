@@ -84,30 +84,26 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Rocket ride — fixed element flying diagonally across viewport
+    // Rocket ride — scroll-scrubbed rocket flying across viewport (like a video)
     if (rocketRide && rocketShip) {
       var rTop = rocketRide.offsetTop;
       var rH = rocketRide.offsetHeight - wh;
       var rp = Math.max(0, Math.min(1, (current - rTop) / rH));
 
       if (rp > 0 && rp < 1) {
-        // Cubic ease-in-out
-        var ep = rp < 0.5
-          ? 4 * rp * rp * rp
-          : 1 - Math.pow(-2 * rp + 2, 3) / 2;
+        // Horizontal: enter from right off-screen, exit left off-screen
+        // Rocket center goes from ww + 250 to -250
+        var rx = ww + 250 - (ww + 500) * rp;
+        // Vertical: slight rise from 65% viewport height to 35%
+        var ry = wh * (0.65 - 0.3 * rp);
 
-        // Viewport-relative path: bottom-right corner to top-left corner
-        // Start off-screen bottom-right, end off-screen top-left
-        var rx = ww * (1.1 - 1.3 * ep);
-        var ry = wh * (1.15 - 1.4 * ep);
-
-        // Fade: appear quickly, stay visible, fade out at end
+        // Fade in/out at edges
         var opacity = 1;
-        if (rp < 0.1) opacity = rp / 0.1;
-        else if (rp > 0.85) opacity = (1 - rp) / 0.15;
+        if (rp < 0.08) opacity = rp / 0.08;
+        else if (rp > 0.92) opacity = (1 - rp) / 0.08;
 
-        // Rotation: tilted to match diagonal flight path (nose pointing up-left)
-        var angle = -35;
+        // Slight tilt — nose pointing up-left
+        var angle = -25;
 
         rocketShip.style.left = rx + 'px';
         rocketShip.style.top = ry + 'px';

@@ -840,36 +840,92 @@ body.cursor-text .cursor__ring {
 }
 
 /* ============================================
-   FEATURES / WHAT YOU GET
+   STACKING CARDS — WHAT YOU GET
    ============================================ */
-.features { padding: 180px 0; }
+.stack-section {
+  padding: 180px 0 0;
+}
 
-.features__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px; background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 20px; overflow: hidden;
+.stack-cards {
+  position: relative;
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 24px;
+  /* Height set by JS: cardCount * scrollPerCard + cardHeight */
 }
-.feature {
-  padding: 48px 36px;
+
+.stack-card {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-bottom: 0;
+  will-change: transform;
+}
+
+.stack-card__inner {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding: 44px 48px;
   background: var(--bg-card);
-  transition: background 0.5s var(--ease);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  transition: box-shadow 0.5s var(--ease), border-color 0.5s var(--ease);
+  overflow: hidden;
 }
-.feature:hover { background: rgba(108,92,231,0.04); }
-.feature__icon {
-  width: 48px; height: 48px;
-  margin-bottom: 24px; color: var(--accent-light);
+
+.stack-card__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(108, 92, 231, 0.06),
+    transparent 70%
+  );
+  transition: opacity 0.5s var(--ease);
+  pointer-events: none;
 }
-.feature__icon svg { width: 100%; height: 100%; }
-.feature h3 {
-  font-family: var(--font-display); font-size: 1.2rem;
-  font-weight: 600; color: #fff;
-  margin-bottom: 12px;
+
+.stack-card:hover .stack-card__inner {
+  border-color: rgba(108, 92, 231, 0.25);
+  box-shadow:
+    0 8px 40px rgba(108, 92, 231, 0.12),
+    0 0 80px rgba(108, 92, 231, 0.05);
 }
-.feature p {
-  font-size: 0.9rem; color: var(--text-dim);
-  line-height: 1.6; font-weight: 300;
+.stack-card:hover .stack-card__inner::before {
+  opacity: 1;
+}
+
+.stack-card__icon {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  color: var(--accent-light);
+  transition: transform 0.5s var(--ease), filter 0.5s var(--ease);
+}
+.stack-card__icon svg { width: 100%; height: 100%; }
+.stack-card:hover .stack-card__icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 12px rgba(108, 92, 231, 0.4));
+}
+
+.stack-card__content h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.stack-card__content p {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  font-weight: 300;
+  max-width: 500px;
 }
 
 /* ============================================
@@ -1201,12 +1257,13 @@ body.cursor-text .cursor__ring {
   .scrub-line--accent { font-size: clamp(1.2rem, 4vw, 1.5rem); }
   .scroll-sticker { display: none; }
 
-  .features__grid { grid-template-columns: 1fr; }
-
   .portfolio__row { flex-direction: column; gap: 24px; }
   .portfolio__info { gap: 20px; }
   .portfolio__num { font-size: 2rem; min-width: 50px; }
   .portfolio__preview { width: 100%; height: 200px; }
+
+  .stack-card__inner { padding: 32px 28px; gap: 24px; }
+  .stack-card__content h3 { font-size: 1.1rem; }
 
   .testimonials__row { grid-template-columns: 1fr; }
 

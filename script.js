@@ -53,6 +53,11 @@
   var parallaxEls = [];
   var scrubLines = [];
   var scrubStickers = [];
+  var stackCards = [];
+  var stackSectionTop = 0;
+  var stackCardHeight = 200;
+  var stackScrollPerCard = 250;
+  var stackTopOffset = 30;
 
   /* ---------- Helpers ---------- */
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -169,7 +174,38 @@
       }
     }
 
-    /* 5) Big CTA scale entrance */
+    /* 5) Stacking cards */
+    if (stackCards.length > 0) {
+      for (var sti = 0; sti < stackCards.length; sti++) {
+        var sc = stackCards[sti];
+        var cardTrigger = stackSectionTop + (sti * stackScrollPerCard);
+        var progress = (current - cardTrigger) / stackScrollPerCard;
+        progress = Math.max(0, Math.min(1, progress));
+
+        // Card rises from below and sticks at its stacked position
+        var stackY = stackTopOffset * sti;
+        var startY = wh * 0.6;
+        var yPos = startY - (startY - stackY) * progress;
+
+        // Scale down slightly as cards get buried
+        var buried = 0;
+        for (var stj = sti + 1; stj < stackCards.length; stj++) {
+          var nextTrigger = stackSectionTop + (stj * stackScrollPerCard);
+          var nextP = Math.max(0, Math.min(1, (current - nextTrigger) / stackScrollPerCard));
+          buried += nextP;
+        }
+        var scaleVal = 1 - (buried * 0.03);
+        scaleVal = Math.max(0.88, scaleVal);
+
+        var opacity = progress < 0.1 ? progress * 10 : 1;
+        sc.style.transform = 'translateY(' + yPos + 'px) scale(' + scaleVal + ')';
+        sc.style.opacity = opacity;
+        sc.style.zIndex = sti + 1;
+        sc.querySelector('.stack-card__inner').style.position = 'relative';
+      }
+    }
+
+    /* 6) Big CTA scale entrance */
     var ctaEl = document.querySelector('[data-cta-scale]');
     if (ctaEl) {
       var ctaTop = getOffsetTop(ctaEl);
@@ -678,6 +714,30 @@
     }
   }
 
+  /* ---------- Stacking Cards Init ---------- */
+  function initStackCards() {
+    var container = document.getElementById('stackCards');
+    if (!container) return;
+    stackCards = Array.from(container.querySelectorAll('[data-stack-card]'));
+    if (!stackCards.length) return;
+
+    stackSectionTop = getOffsetTop(container);
+    stackCardHeight = stackCards[0].offsetHeight || 200;
+
+    // Set container height to create enough scroll distance
+    var totalHeight = stackCards.length * stackScrollPerCard + wh;
+    container.style.height = totalHeight + 'px';
+
+    // Initially hide all cards below viewport
+    for (var i = 0; i < stackCards.length; i++) {
+      stackCards[i].style.position = 'absolute';
+      stackCards[i].style.top = '0';
+      stackCards[i].style.left = '0';
+      stackCards[i].style.right = '0';
+      stackCards[i].style.opacity = '0';
+    }
+  }
+
   /* ---------- Init ---------- */
   function initAfterLoad() {
     parallaxEls = Array.from(document.querySelectorAll('[data-speed]'));
@@ -686,6 +746,7 @@
     initScrollAnimations();
     initCardDeck();
     initPortfolioGlow();
+    initStackCards();
     smoothScroll();
     initStarfield();
     initCursor();
@@ -718,6 +779,9 @@
       for (var m = 0; m < splitWordSections.length; m++) {
         splitWordSections[m].top = getOffsetTop(splitWordSections[m].el);
       }
+      // Recalculate stack cards
+      var stackContainer = document.getElementById('stackCards');
+      if (stackContainer) stackSectionTop = getOffsetTop(stackContainer);
     }, 150);
   });
 })();

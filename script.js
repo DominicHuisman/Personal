@@ -692,18 +692,6 @@
       });
     }
 
-    // Mouse wheel to scroll through cards
-    var wheelCooldown = false;
-    deck.addEventListener('wheel', function(e) {
-      if (wheelCooldown) return;
-      if (Math.abs(e.deltaY) < 5 && Math.abs(e.deltaX) < 5) return;
-      e.preventDefault();
-      wheelCooldown = true;
-      if (e.deltaY > 0 || e.deltaX > 0) deckNext();
-      else deckPrev();
-      setTimeout(function() { wheelCooldown = false; }, 400);
-    }, { passive: false });
-
     setDeckPositions();
   }
 

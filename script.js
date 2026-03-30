@@ -35,7 +35,8 @@
   const zoomSection = document.querySelector('.zoom-intro');
   const zoomText = document.getElementById('zoomText');
   const zoomHint = document.getElementById('zoomHint');
-  const transitionStar = document.getElementById('transitionStar');
+  const wipeStreak = document.querySelector('.section-wipe__streak');
+  const wipeFlash = document.querySelector('.section-wipe__flash');
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -83,45 +84,59 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Transition star between hero and difference
-    if (transitionStar) {
+    // Section wipe transition between hero and difference
+    if (wipeStreak && wipeFlash) {
       var heroEl = document.getElementById('hero');
       var diffEl = document.getElementById('difference');
       if (heroEl && diffEl) {
-        var starStart = heroEl.offsetTop + heroEl.offsetHeight * 0.6;
-        var starEnd = diffEl.offsetTop + wh * 0.3;
-        var starRange = starEnd - starStart;
-        var sp = (current - starStart) / starRange;
-        sp = Math.max(0, Math.min(1, sp));
+        // Transition zone: from 70% through hero to 20% into difference
+        var wipeStart = heroEl.offsetTop + heroEl.offsetHeight * 0.7;
+        var wipeEnd = diffEl.offsetTop + wh * 0.15;
+        var wipeRange = wipeEnd - wipeStart;
+        var wp = (current - wipeStart) / wipeRange;
+        wp = Math.max(0, Math.min(1, wp));
 
-        if (sp > 0 && sp < 1) {
-          // Ease in-out cubic
-          var ep = sp < 0.5 ? 4 * sp * sp * sp : 1 - Math.pow(-2 * sp + 2, 3) / 2;
-          // Sweep from right to left, with a diagonal arc
-          var startX = ww + 50;
-          var endX = -250;
-          var sx = startX + (endX - startX) * ep;
-          // Arc: peak in middle of screen vertically
-          var midY = wh * 0.45;
-          var startY = wh * 0.8;
-          var endY = wh * 0.15;
-          var sy;
-          if (sp < 0.5) {
-            sy = startY + (midY - startY) * (sp / 0.5);
+        if (wp > 0 && wp < 1) {
+          /*
+            Phase 1 (0 → 0.35): Streak enters from left, thin bright line sweeps across
+            Phase 2 (0.35 → 0.6): Streak thickens dramatically, screen fills with light
+            Phase 3 (0.6 → 1.0): Flash fades out, revealing next section
+          */
+          var streakOpacity, streakTranslateX, streakScaleY, flashOpacity;
+
+          if (wp < 0.35) {
+            // Phase 1: streak sweeps in
+            var p1 = wp / 0.35;
+            var ep1 = p1 * p1; // ease-in
+            streakTranslateX = -120 + ep1 * 120; // -120% to 0%
+            streakScaleY = 1 + p1 * 3; // thin line grows slightly
+            streakOpacity = Math.min(1, p1 * 3);
+            flashOpacity = 0;
+          } else if (wp < 0.6) {
+            // Phase 2: streak expands to fill screen
+            var p2 = (wp - 0.35) / 0.25;
+            var ep2 = p2 * p2;
+            streakTranslateX = 0;
+            streakScaleY = 4 + ep2 * 600; // explodes in thickness
+            streakOpacity = 1;
+            flashOpacity = ep2 * 0.9;
           } else {
-            sy = midY + (endY - midY) * ((sp - 0.5) / 0.5);
+            // Phase 3: everything fades
+            var p3 = (wp - 0.6) / 0.4;
+            var ep3 = 1 - Math.pow(1 - p3, 2); // ease-out
+            streakTranslateX = 0;
+            streakScaleY = 604;
+            streakOpacity = 1 - ep3;
+            flashOpacity = 0.9 * (1 - ep3);
           }
-          // Angle towards movement direction
-          var angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
-          // Fade: appear fast, hold, disappear at end
-          var starOpacity = 1;
-          if (sp < 0.08) starOpacity = sp / 0.08;
-          else if (sp > 0.85) starOpacity = (1 - sp) / 0.15;
 
-          transitionStar.style.opacity = starOpacity;
-          transitionStar.style.transform = 'translate(' + sx + 'px,' + sy + 'px) rotate(' + angle + 'deg)';
+          wipeStreak.style.opacity = streakOpacity;
+          wipeStreak.style.transform = 'rotate(-25deg) scaleY(' + streakScaleY + ') translateX(' + streakTranslateX + '%)';
+          wipeFlash.style.opacity = flashOpacity;
         } else {
-          transitionStar.style.opacity = 0;
+          wipeStreak.style.opacity = 0;
+          wipeStreak.style.transform = 'rotate(-25deg) scaleY(0) translateX(-120%)';
+          wipeFlash.style.opacity = 0;
         }
       }
     }

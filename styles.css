@@ -466,34 +466,45 @@ body.cursor-text .cursor__ring {
 }
 
 /* ============================================
-   TRANSITION STAR (scroll-driven)
+   SECTION WIPE TRANSITION
    ============================================ */
-.transition-star {
+.section-wipe {
   position: fixed;
-  top: 0; left: 0;
-  z-index: 50;
+  inset: 0;
+  z-index: 90;
   pointer-events: none;
-  opacity: 0;
-  will-change: transform, opacity;
+  overflow: hidden;
 }
-.transition-star__head {
-  width: 6px; height: 6px;
-  background: #fff;
-  border-radius: 50%;
-  box-shadow:
-    0 0 12px 4px rgba(162,155,254,0.7),
-    0 0 40px 8px rgba(108,92,231,0.4);
-  position: relative;
-  z-index: 2;
-}
-.transition-star__trail {
+.section-wipe__streak {
   position: absolute;
-  top: 50%; right: 100%;
-  width: 200px; height: 2px;
-  transform: translateY(-50%);
-  background: linear-gradient(90deg, transparent, rgba(162,155,254,0.15) 30%, rgba(162,155,254,0.6));
-  border-radius: 2px;
-  z-index: 1;
+  top: 50%; left: -10%;
+  width: 120%; height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(162,155,254,0.3) 20%,
+    rgba(255,255,255,0.9) 45%,
+    #fff 50%,
+    rgba(255,255,255,0.9) 55%,
+    rgba(162,155,254,0.3) 80%,
+    transparent 100%
+  );
+  transform: rotate(-25deg) scaleY(0) translateX(-120%);
+  transform-origin: center center;
+  will-change: transform;
+  opacity: 0;
+}
+.section-wipe__flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(162,155,254,0.15) 0%,
+    rgba(108,92,231,0.05) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  will-change: opacity;
 }
 
 /* ============================================

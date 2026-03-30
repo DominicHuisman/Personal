@@ -28,11 +28,31 @@
     // snap precision
     if (Math.abs(target - current) < 0.5) current = target;
     content.style.transform = 'translate3d(0,' + (-current) + 'px,0)';
+    // gradient text scroll color
+    updateGradientText();
     // parallax
     updateParallax();
     // rocket zoom
     updateRocket();
     raf = requestAnimationFrame(smoothScroll);
+  }
+
+  /* ----- SCROLL-DRIVEN GRADIENT TEXT ----- */
+  var gradientEls = [];
+
+  function initGradientText() {
+    gradientEls = document.querySelectorAll('.gradient-text');
+  }
+
+  function updateGradientText() {
+    if (!gradientEls.length) return;
+    var maxScroll = content.scrollHeight - wh;
+    if (maxScroll <= 0) return;
+    var progress = current / maxScroll; // 0 → 1
+    var pos = progress * 100; // 0% → 100%
+    for (var i = 0; i < gradientEls.length; i++) {
+      gradientEls[i].style.backgroundPosition = pos + '% 50%';
+    }
   }
 
   /* ----- PARALLAX ----- */
@@ -408,6 +428,7 @@
 
     setBodyHeight();
     cacheParallax();
+    initGradientText();
     smoothScroll();
 
     initRocket();

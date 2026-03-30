@@ -648,27 +648,48 @@
       })(c);
     }
 
-    // Touch / pointer drag to swipe
+    // Click-and-drag to swipe through cards
     var cardsEl = deck.querySelector('.packages-deck__cards');
     if (cardsEl) {
-      cardsEl.addEventListener('pointerdown', function(e) {
+      cardsEl.style.touchAction = 'pan-y';
+      cardsEl.addEventListener('mousedown', function(e) {
         if (e.target.closest('a, button')) return;
+        e.preventDefault();
         deckDragging = true;
         deckStartX = e.clientX;
         deckDelta = 0;
-        cardsEl.setPointerCapture(e.pointerId);
+        cardsEl.style.cursor = 'grabbing';
       });
-      cardsEl.addEventListener('pointermove', function(e) {
+      document.addEventListener('mousemove', function(e) {
         if (!deckDragging) return;
+        e.preventDefault();
         deckDelta = e.clientX - deckStartX;
       });
-      cardsEl.addEventListener('pointerup', function() {
+      document.addEventListener('mouseup', function() {
+        if (!deckDragging) return;
+        deckDragging = false;
+        cardsEl.style.cursor = '';
+        if (deckDelta < -50) deckNext();
+        else if (deckDelta > 50) deckPrev();
+      });
+
+      // Touch swipe support
+      cardsEl.addEventListener('touchstart', function(e) {
+        if (e.target.closest('a, button')) return;
+        deckDragging = true;
+        deckStartX = e.touches[0].clientX;
+        deckDelta = 0;
+      }, { passive: true });
+      cardsEl.addEventListener('touchmove', function(e) {
+        if (!deckDragging) return;
+        deckDelta = e.touches[0].clientX - deckStartX;
+      }, { passive: true });
+      cardsEl.addEventListener('touchend', function() {
         if (!deckDragging) return;
         deckDragging = false;
         if (deckDelta < -50) deckNext();
         else if (deckDelta > 50) deckPrev();
       });
-      cardsEl.addEventListener('pointercancel', function() { deckDragging = false; });
     }
 
     // Mouse wheel to scroll through cards

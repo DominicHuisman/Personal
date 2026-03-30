@@ -1,5 +1,5 @@
 /* ============================================
-   NEXUS DIGITAL — IMMERSIVE SCROLL ENGINE
+   NEXUS DIGITAL — REEL SCROLL ENGINE
    ============================================ */
 
 (function () {
@@ -15,26 +15,21 @@
   function animatePreloader() {
     loadProgress += (100 - loadProgress) * 0.08;
     preloaderFill.style.width = loadProgress + '%';
-
-    if (loadProgress < 95) {
-      requestAnimationFrame(animatePreloader);
-    }
+    if (loadProgress < 95) requestAnimationFrame(animatePreloader);
   }
 
   animatePreloader();
+  document.body.style.overflow = 'hidden';
 
   window.addEventListener('load', () => {
     loadProgress = 100;
     preloaderFill.style.width = '100%';
-
     setTimeout(() => {
       preloader.classList.add('done');
       document.body.style.overflow = '';
       initEverything();
     }, 600);
   });
-
-  document.body.style.overflow = 'hidden';
 
 
   /* ----------------------------------------
@@ -70,7 +65,6 @@
   function drawStars() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Ambient gradient
     const g = ctx.createRadialGradient(
       canvas.width * 0.25, canvas.height * 0.25, 0,
       canvas.width * 0.25, canvas.height * 0.25, canvas.width * 0.7
@@ -134,7 +128,6 @@
     }
     updateCursor();
 
-    // Hover effects
     document.addEventListener('mouseover', (e) => {
       const target = e.target.closest('a, button, [data-cursor-text]');
       if (!target) {
@@ -142,7 +135,6 @@
         cursorLabel.textContent = '';
         return;
       }
-
       const label = target.getAttribute('data-cursor-text');
       if (label) {
         document.body.classList.add('cursor-text');
@@ -168,63 +160,58 @@
      MAIN INIT
      ---------------------------------------- */
   function initEverything() {
-    initIntroSequence();
+    initSlides();
     initNavigation();
-    initRevealAnimations();
-    initHeroParallax();
-    initHorizontalScroll();
+    initDots();
     initContactForm();
     initSmoothAnchors();
   }
 
 
   /* ----------------------------------------
-     INTRO — Brand reveal
+     SLIDE OBSERVER — triggers .in-view
      ---------------------------------------- */
-  function initIntroSequence() {
-    const intro = document.getElementById('intro');
-    const brand = intro.querySelector('.intro__brand');
+  function initSlides() {
+    const slides = document.querySelectorAll('.slide');
     const nav = document.getElementById('nav');
+    const dots = document.getElementById('dots');
+    const dotBtns = dots.querySelectorAll('.dot');
+    const slideIds = Array.from(slides).map(s => s.id);
 
-    function updateIntro() {
-      const rect = intro.getBoundingClientRect();
-      const scrollHeight = intro.offsetHeight - window.innerHeight;
-      const scrolled = -rect.top;
-      const progress = Math.max(0, Math.min(1, scrolled / scrollHeight));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Add in-view class (keep it — don't remove on exit)
+          entry.target.classList.add('in-view');
 
-      let opacity = 0;
-      let scale = 0.92;
+          // Update active dot
+          const id = entry.target.id;
+          const idx = slideIds.indexOf(id);
+          dotBtns.forEach((d, i) => d.classList.toggle('active', i === idx));
 
-      if (progress < 0.15) {
-        // Fade in
-        const t = progress / 0.15;
-        opacity = t;
-        scale = 0.92 + t * 0.08;
-      } else if (progress < 0.7) {
-        // Hold
-        opacity = 1;
-        scale = 1;
-      } else {
-        // Fade out
-        const t = (progress - 0.7) / 0.3;
-        opacity = 1 - t;
-        scale = 1 + t * 0.04;
-      }
+          // Show nav & dots after intro slide
+          if (id !== 'intro') {
+            nav.classList.add('visible');
+            dots.classList.add('visible');
+          } else {
+            nav.classList.remove('visible');
+            dots.classList.remove('visible');
+          }
 
-      brand.style.opacity = opacity;
-      brand.style.transform = `scale(${scale})`;
+          // Add scrolled class if past hero
+          const heroIdx = slideIds.indexOf('hero');
+          if (idx > heroIdx) {
+            nav.classList.add('scrolled');
+          } else {
+            nav.classList.remove('scrolled');
+          }
+        }
+      });
+    }, {
+      threshold: 0.55
+    });
 
-      // Show nav after intro
-      if (progress > 0.95) {
-        nav.classList.add('visible');
-      } else {
-        nav.classList.remove('visible');
-      }
-
-      requestAnimationFrame(updateIntro);
-    }
-
-    requestAnimationFrame(updateIntro);
+    slides.forEach(slide => observer.observe(slide));
   }
 
 
@@ -232,14 +219,8 @@
      NAVIGATION
      ---------------------------------------- */
   function initNavigation() {
-    const nav = document.getElementById('nav');
     const navToggle = document.getElementById('navToggle');
     const navLinks = document.getElementById('navLinks');
-
-    window.addEventListener('scroll', () => {
-      const introBottom = document.getElementById('intro').getBoundingClientRect().bottom;
-      nav.classList.toggle('scrolled', introBottom < 0 && window.scrollY > 100);
-    }, { passive: true });
 
     navToggle.addEventListener('click', () => {
       navToggle.classList.toggle('active');
@@ -258,147 +239,20 @@
 
 
   /* ----------------------------------------
-     REVEAL ANIMATIONS
+     SECTION DOTS
      ---------------------------------------- */
-  function initRevealAnimations() {
-    const els = document.querySelectorAll('.reveal-up');
+  function initDots() {
+    const dotBtns = document.querySelectorAll('.dot');
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Stagger siblings
-          const parent = entry.target.parentElement;
-          const siblings = Array.from(parent.children).filter(c => c.classList.contains('reveal-up'));
-          const idx = siblings.indexOf(entry.target);
-          const delay = Math.min(idx * 120, 500);
-
-          setTimeout(() => {
-            entry.target.classList.add('visible');
-          }, delay);
-
-          observer.unobserve(entry.target);
+    dotBtns.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const targetId = dot.getAttribute('data-target');
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
         }
       });
-    }, {
-      threshold: 0.15,
-      rootMargin: '0px 0px -60px 0px'
     });
-
-    els.forEach(el => observer.observe(el));
-
-    // Hero line reveals
-    const heroTitle = document.querySelector('.hero__title');
-    if (heroTitle) {
-      const heroObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.closest('.hero__title-wrap').classList.add('lines-visible');
-
-            // Also reveal sub and ctas
-            setTimeout(() => {
-              const sub = document.querySelector('.hero__sub');
-              const ctas = document.querySelector('.hero__ctas');
-              if (sub) sub.style.cssText = 'opacity:1;transform:translateY(0);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s, transform 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s';
-              if (ctas) ctas.style.cssText = 'opacity:1;transform:translateY(0);transition:opacity 0.8s cubic-bezier(0.22,1,0.36,1) 0.6s, transform 0.8s cubic-bezier(0.22,1,0.36,1) 0.6s';
-            }, 100);
-
-            heroObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.3 });
-
-      heroObserver.observe(heroTitle);
-
-      // Init hidden state
-      const sub = document.querySelector('.hero__sub');
-      const ctas = document.querySelector('.hero__ctas');
-      if (sub) sub.style.cssText = 'opacity:0;transform:translateY(30px)';
-      if (ctas) ctas.style.cssText = 'opacity:0;transform:translateY(30px)';
-    }
-
-    // Big CTA line reveals
-    const bigCtaTitle = document.querySelector('.big-cta__title');
-    if (bigCtaTitle) {
-      const ctaObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('lines-visible');
-            ctaObserver.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.3 });
-
-      ctaObserver.observe(bigCtaTitle);
-    }
-  }
-
-
-  /* ----------------------------------------
-     HERO PARALLAX
-     ---------------------------------------- */
-  function initHeroParallax() {
-    const parallaxEls = document.querySelectorAll('[data-parallax]');
-
-    function updateParallax() {
-      const scrollY = window.scrollY;
-      const heroH = window.innerHeight;
-
-      if (scrollY < heroH * 2) {
-        parallaxEls.forEach(el => {
-          const rate = parseFloat(el.getAttribute('data-parallax'));
-          const y = scrollY * rate;
-          el.style.transform = `translate3d(0, ${y}px, 0)`;
-        });
-      }
-
-      requestAnimationFrame(updateParallax);
-    }
-
-    updateParallax();
-  }
-
-
-  /* ----------------------------------------
-     HORIZONTAL SCROLL (Work section)
-     ---------------------------------------- */
-  function initHorizontalScroll() {
-    const section = document.getElementById('work');
-    const horizontal = document.getElementById('workHorizontal');
-    const track = document.getElementById('workTrack');
-
-    if (!section || !horizontal || !track) return;
-
-    function updateHorizontalScroll() {
-      const rect = horizontal.getBoundingClientRect();
-      const sectionRect = section.getBoundingClientRect();
-
-      // Calculate how much horizontal scroll space we need
-      const trackWidth = track.scrollWidth;
-      const viewWidth = window.innerWidth;
-      const scrollDistance = trackWidth - viewWidth + 100;
-
-      // Progress through the work section
-      const sectionHeight = section.offsetHeight;
-      const sectionScrolled = -sectionRect.top;
-      const headerHeight = 300; // rough height of the title area
-      const effectiveScroll = sectionScrolled - headerHeight;
-      const scrollRange = sectionHeight - window.innerHeight - headerHeight;
-      const progress = Math.max(0, Math.min(1, effectiveScroll / scrollRange));
-
-      // Apply horizontal scroll
-      const x = -progress * scrollDistance;
-      track.style.transform = `translate3d(${x}px, 0, 0)`;
-
-      requestAnimationFrame(updateHorizontalScroll);
-    }
-
-    // Set appropriate margin/height for scroll room
-    const trackWidth = track.scrollWidth;
-    const viewWidth = window.innerWidth;
-    const ratio = trackWidth / viewWidth;
-    section.style.marginBottom = Math.max(ratio * 100, 150) + 'vh';
-
-    requestAnimationFrame(updateHorizontalScroll);
   }
 
 
@@ -412,12 +266,8 @@
         if (href === '#') return;
         const target = document.querySelector(href);
         if (!target) return;
-
         e.preventDefault();
-        const navH = document.getElementById('nav').offsetHeight;
-        const top = target.getBoundingClientRect().top + window.scrollY - navH;
-
-        window.scrollTo({ top, behavior: 'smooth' });
+        target.scrollIntoView({ behavior: 'smooth' });
       });
     });
   }
@@ -453,7 +303,7 @@
           btn.style.background = '';
           btn.style.boxShadow = '';
         }, 3000);
-      }, 1500);
+      }, 1200);
     });
   }
 

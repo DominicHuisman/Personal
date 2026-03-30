@@ -32,22 +32,6 @@
     </div>
   </div>
 
-  <!-- INTRO — Brand reveal on scroll -->
-  <section class="intro" id="intro">
-    <div class="intro__sticky">
-      <div class="intro__brand">
-        <!-- Logomark -->
-        <svg class="intro__mark" viewBox="0 0 80 80" fill="none">
-          <rect x="4" y="4" width="72" height="72" rx="16" stroke="url(#introGrad)" stroke-width="1.5"/>
-          <path d="M28 52V28l12 18L52 28v24" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <defs><linearGradient id="introGrad" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#6c5ce7"/><stop offset="1" stop-color="#00cec9"/></linearGradient></defs>
-        </svg>
-        <span class="intro__wordmark">NEXUS<span>.</span></span>
-        <span class="intro__tagline">Web Design Studio</span>
-      </div>
-    </div>
-  </section>
-
   <!-- NAVIGATION -->
   <nav class="nav" id="nav">
     <div class="nav__inner">
@@ -65,273 +49,232 @@
     </div>
   </nav>
 
-  <!-- HERO -->
-  <section class="hero" id="hero">
-    <div class="hero__content">
-      <div class="hero__title-wrap">
-        <h1 class="hero__title" data-parallax="-0.15">
-          <span class="line"><span class="line__inner">We Design &amp; Build</span></span>
-          <span class="line"><span class="line__inner gradient-text">Websites That Convert.</span></span>
-        </h1>
+  <!-- SECTION DOTS -->
+  <div class="dots" id="dots">
+    <button class="dot active" data-target="intro" aria-label="Intro"></button>
+    <button class="dot" data-target="hero" aria-label="Hero"></button>
+    <button class="dot" data-target="about" aria-label="About"></button>
+    <button class="dot" data-target="services" aria-label="Services"></button>
+    <button class="dot" data-target="work" aria-label="Work"></button>
+    <button class="dot" data-target="process" aria-label="Process"></button>
+    <button class="dot" data-target="pricing" aria-label="Pricing"></button>
+    <button class="dot" data-target="testimonials" aria-label="Testimonials"></button>
+    <button class="dot" data-target="contact" aria-label="Contact"></button>
+  </div>
+
+  <!-- ========== SLIDES ========== -->
+
+  <!-- 1. INTRO -->
+  <section class="slide slide--intro" id="intro">
+    <div class="slide__inner slide__center">
+      <svg class="intro__mark" viewBox="0 0 80 80" fill="none">
+        <rect x="4" y="4" width="72" height="72" rx="16" stroke="url(#introGrad)" stroke-width="1.5"/>
+        <path d="M28 52V28l12 18L52 28v24" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <defs><linearGradient id="introGrad" x1="0" y1="0" x2="80" y2="80"><stop stop-color="#6c5ce7"/><stop offset="1" stop-color="#00cec9"/></linearGradient></defs>
+      </svg>
+      <h1 class="intro__wordmark anim-item">NEXUS<span>.</span></h1>
+      <p class="intro__tagline anim-item">Web Design Studio</p>
+      <div class="slide__scroll-hint anim-item">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
       </div>
-      <p class="hero__sub" data-parallax="0.05">
+    </div>
+  </section>
+
+  <!-- 2. HERO -->
+  <section class="slide slide--hero" id="hero">
+    <div class="slide__inner slide__center">
+      <p class="tag anim-item">[ Nexus Digital ]</p>
+      <h2 class="hero__title anim-item">
+        <span class="line"><span class="line__inner">We Design &amp; Build</span></span>
+        <span class="line"><span class="line__inner gradient-text">Websites That Convert.</span></span>
+      </h2>
+      <p class="slide__body anim-item">
         Custom-crafted websites designed to turn<br>your visitors into paying customers.
       </p>
-      <div class="hero__ctas" data-parallax="0.1">
+      <div class="slide__ctas anim-item">
         <a href="#work" class="btn btn--primary">View Our Work</a>
         <a href="#contact" class="btn btn--ghost">Get Started <span class="btn__arrow">&rarr;</span></a>
       </div>
     </div>
-    <div class="hero__scroll-hint">
-      <span>Scroll</span>
-      <div class="hero__scroll-line"></div>
-    </div>
   </section>
 
-  <!-- MARQUEE -->
-  <div class="marquee">
-    <div class="marquee__track">
-      <span>Web Design</span><span class="marquee__dot">&#9670;</span>
-      <span>Development</span><span class="marquee__dot">&#9670;</span>
-      <span>E-Commerce</span><span class="marquee__dot">&#9670;</span>
-      <span>UI/UX</span><span class="marquee__dot">&#9670;</span>
-      <span>Responsive</span><span class="marquee__dot">&#9670;</span>
-      <span>Custom Code</span><span class="marquee__dot">&#9670;</span>
-      <span>Web Design</span><span class="marquee__dot">&#9670;</span>
-      <span>Development</span><span class="marquee__dot">&#9670;</span>
-      <span>E-Commerce</span><span class="marquee__dot">&#9670;</span>
-      <span>UI/UX</span><span class="marquee__dot">&#9670;</span>
-      <span>Responsive</span><span class="marquee__dot">&#9670;</span>
-      <span>Custom Code</span><span class="marquee__dot">&#9670;</span>
-    </div>
-  </div>
-
-  <!-- ABOUT -->
-  <section class="about" id="about">
-    <div class="container">
-      <div class="about__header">
-        <p class="tag reveal-up">[ About ]</p>
+  <!-- 3. ABOUT -->
+  <section class="slide slide--about" id="about">
+    <div class="slide__inner container">
+      <div class="about__top">
+        <p class="tag anim-item">[ About ]</p>
+        <h2 class="slide__title anim-item">
+          Your website is your most powerful<br>
+          <span class="gradient-text">sales tool. We make it work.</span>
+        </h2>
       </div>
-      <h2 class="about__headline reveal-up">
-        Your website is your most powerful<br>
-        <span class="gradient-text">sales tool. We make it work.</span>
-      </h2>
-      <p class="about__body reveal-up">
-        We&rsquo;re a web design studio obsessed with craft. Every site we build is custom-coded, conversion-tested, and designed to make your business look as good online as it is in real life.
-      </p>
-      <div class="about__pillars">
-        <div class="pillar reveal-up">
+      <div class="pillars">
+        <div class="pillar anim-item">
           <span class="pillar__num">01</span>
-          <h3>Custom<br>Design</h3>
-          <p>Bespoke layouts and visual systems &mdash; no templates, no shortcuts.</p>
+          <h3>Custom Design</h3>
+          <p>Bespoke layouts and visual systems &mdash; no templates.</p>
         </div>
-        <div class="pillar reveal-up">
+        <div class="pillar anim-item">
           <span class="pillar__num">02</span>
-          <h3>Clean<br>Development</h3>
+          <h3>Clean Development</h3>
           <p>Hand-coded, lightning-fast, responsive on every screen.</p>
         </div>
-        <div class="pillar reveal-up">
+        <div class="pillar anim-item">
           <span class="pillar__num">03</span>
-          <h3>Conversion<br>Focused</h3>
-          <p>Every pixel exists to guide visitors toward taking action.</p>
+          <h3>Conversion Focused</h3>
+          <p>Every pixel guides visitors toward taking action.</p>
         </div>
-        <div class="pillar reveal-up">
+        <div class="pillar anim-item">
           <span class="pillar__num">04</span>
-          <h3>Ongoing<br>Support</h3>
+          <h3>Ongoing Support</h3>
           <p>Updates, optimizations, and growth strategy after launch.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- SERVICES -->
-  <section class="services" id="services">
-    <div class="container">
-      <p class="tag reveal-up">[ Services ]</p>
-      <h2 class="section-headline reveal-up">
-        What we<br><span class="gradient-text">build.</span>
-      </h2>
-    </div>
-    <div class="services__list">
-      <a href="#contact" class="service-row" data-cursor-text="View">
-        <div class="container">
-          <div class="service-row__inner">
-            <span class="service-row__num">01</span>
-            <h3 class="service-row__title">Custom Websites</h3>
-            <p class="service-row__desc">Bespoke design, hand-coded development, CMS integration, fully responsive.</p>
-            <span class="service-row__arrow">&rarr;</span>
-          </div>
-        </div>
-      </a>
-      <a href="#contact" class="service-row" data-cursor-text="View">
-        <div class="container">
-          <div class="service-row__inner">
-            <span class="service-row__num">02</span>
-            <h3 class="service-row__title">E-Commerce</h3>
-            <p class="service-row__desc">Online stores built to sell &mdash; product pages, checkout flows, payment integration.</p>
-            <span class="service-row__arrow">&rarr;</span>
-          </div>
-        </div>
-      </a>
-      <a href="#contact" class="service-row" data-cursor-text="View">
-        <div class="container">
-          <div class="service-row__inner">
-            <span class="service-row__num">03</span>
-            <h3 class="service-row__title">Landing Pages</h3>
-            <p class="service-row__desc">High-converting single-page experiences for campaigns, launches, and lead gen.</p>
-            <span class="service-row__arrow">&rarr;</span>
-          </div>
-        </div>
-      </a>
-      <a href="#contact" class="service-row" data-cursor-text="View">
-        <div class="container">
-          <div class="service-row__inner">
-            <span class="service-row__num">04</span>
-            <h3 class="service-row__title">SEO &amp; Optimization</h3>
-            <p class="service-row__desc">Search visibility, speed tuning, conversion optimization, analytics setup.</p>
-            <span class="service-row__arrow">&rarr;</span>
-          </div>
-        </div>
-      </a>
+  <!-- 4. SERVICES -->
+  <section class="slide slide--services" id="services">
+    <div class="slide__inner container">
+      <p class="tag anim-item">[ Services ]</p>
+      <h2 class="slide__title anim-item">What we <span class="gradient-text">build.</span></h2>
+      <div class="services__list">
+        <a href="#contact" class="service-row anim-item" data-cursor-text="View">
+          <span class="service-row__num">01</span>
+          <h3 class="service-row__title">Custom Websites</h3>
+          <p class="service-row__desc">Bespoke design, hand-coded development, CMS integration, fully responsive.</p>
+          <span class="service-row__arrow">&rarr;</span>
+        </a>
+        <a href="#contact" class="service-row anim-item" data-cursor-text="View">
+          <span class="service-row__num">02</span>
+          <h3 class="service-row__title">E-Commerce</h3>
+          <p class="service-row__desc">Online stores built to sell &mdash; product pages, checkout flows, payment integration.</p>
+          <span class="service-row__arrow">&rarr;</span>
+        </a>
+        <a href="#contact" class="service-row anim-item" data-cursor-text="View">
+          <span class="service-row__num">03</span>
+          <h3 class="service-row__title">Landing Pages</h3>
+          <p class="service-row__desc">High-converting single-page experiences for campaigns, launches, and lead gen.</p>
+          <span class="service-row__arrow">&rarr;</span>
+        </a>
+        <a href="#contact" class="service-row anim-item" data-cursor-text="View">
+          <span class="service-row__num">04</span>
+          <h3 class="service-row__title">SEO &amp; Optimization</h3>
+          <p class="service-row__desc">Search visibility, speed tuning, conversion optimization, analytics setup.</p>
+          <span class="service-row__arrow">&rarr;</span>
+        </a>
+      </div>
     </div>
   </section>
 
-  <!-- WORK — HORIZONTAL SCROLL -->
-  <section class="work" id="work">
-    <div class="container">
-      <p class="tag reveal-up">[ Selected Work ]</p>
-      <h2 class="section-headline reveal-up">
-        Sites we've<br><span class="gradient-text">crafted.</span>
-      </h2>
-    </div>
-    <div class="work__horizontal" id="workHorizontal">
-      <div class="work__track" id="workTrack">
-        <article class="work__item">
-          <div class="work__img" style="background: linear-gradient(135deg, #1a1a2e, #16213e);"></div>
-          <div class="work__meta">
+  <!-- 5. WORK -->
+  <section class="slide slide--work" id="work">
+    <div class="slide__inner container">
+      <p class="tag anim-item">[ Selected Work ]</p>
+      <h2 class="slide__title anim-item">Sites we've <span class="gradient-text">crafted.</span></h2>
+      <div class="work__grid">
+        <article class="work__card anim-item" data-cursor-text="View">
+          <div class="work__thumb" style="background: linear-gradient(135deg, #1a1a2e, #16213e);"></div>
+          <div class="work__info">
             <h3>Meridian Law Group</h3>
-            <p>Full brand identity and website redesign. Increased client inquiries by 180%.</p>
-            <span class="work__tag">Website Design + SEO</span>
+            <span>Website Design + SEO</span>
           </div>
         </article>
-        <article class="work__item">
-          <div class="work__img" style="background: linear-gradient(135deg, #0f0c29, #302b63);"></div>
-          <div class="work__meta">
+        <article class="work__card anim-item" data-cursor-text="View">
+          <div class="work__thumb" style="background: linear-gradient(135deg, #0f0c29, #302b63);"></div>
+          <div class="work__info">
             <h3>Aura Skincare</h3>
-            <p>E-commerce platform with integrated booking. Revenue doubled within 90 days.</p>
-            <span class="work__tag">E-commerce + Growth</span>
+            <span>E-Commerce + Growth</span>
           </div>
         </article>
-        <article class="work__item">
-          <div class="work__img" style="background: linear-gradient(135deg, #1a1a2e, #0a3d62);"></div>
-          <div class="work__meta">
+        <article class="work__card anim-item" data-cursor-text="View">
+          <div class="work__thumb" style="background: linear-gradient(135deg, #1a1a2e, #0a3d62);"></div>
+          <div class="work__info">
             <h3>Atlas Ventures</h3>
-            <p>Investor-facing website with dynamic portfolio showcase. Secured 3 new funding rounds.</p>
-            <span class="work__tag">Website + Management</span>
+            <span>Website + Branding</span>
           </div>
         </article>
-        <article class="work__item">
-          <div class="work__img" style="background: linear-gradient(135deg, #1e1e3f, #3d1f5c);"></div>
-          <div class="work__meta">
+        <article class="work__card anim-item" data-cursor-text="View">
+          <div class="work__thumb" style="background: linear-gradient(135deg, #1e1e3f, #3d1f5c);"></div>
+          <div class="work__info">
             <h3>Pulse Fitness</h3>
-            <p>Membership-driven website with automated lead nurturing. 250+ sign-ups month one.</p>
-            <span class="work__tag">Full Digital System</span>
+            <span>Full Digital System</span>
           </div>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- PROCESS -->
-  <section class="process" id="process">
-    <div class="container">
-      <p class="tag reveal-up">[ Process ]</p>
-      <h2 class="section-headline reveal-up">
-        How your site<br><span class="gradient-text">comes to life.</span>
-      </h2>
-      <div class="process__steps">
-        <div class="process__step reveal-up">
-          <div class="process__step-num"><span>01</span><div class="process__step-line"></div></div>
-          <div class="process__step-content">
-            <h3>Discovery</h3>
-            <p>We learn your brand, audience, and goals to define the right direction before a single pixel is placed.</p>
-          </div>
+  <!-- 6. PROCESS -->
+  <section class="slide slide--process" id="process">
+    <div class="slide__inner container">
+      <p class="tag anim-item">[ Process ]</p>
+      <h2 class="slide__title anim-item">How your site <span class="gradient-text">comes to life.</span></h2>
+      <div class="process__row">
+        <div class="process__step anim-item">
+          <span class="process__num">01</span>
+          <h3>Discovery</h3>
+          <p>We learn your brand, audience, and goals before a single pixel is placed.</p>
         </div>
-        <div class="process__step reveal-up">
-          <div class="process__step-num"><span>02</span><div class="process__step-line"></div></div>
-          <div class="process__step-content">
-            <h3>Design</h3>
-            <p>We design every page in detail &mdash; layout, typography, interaction &mdash; until it feels right.</p>
-          </div>
+        <div class="process__step anim-item">
+          <span class="process__num">02</span>
+          <h3>Design</h3>
+          <p>We design every page in detail &mdash; layout, typography, interaction.</p>
         </div>
-        <div class="process__step reveal-up">
-          <div class="process__step-num"><span>03</span><div class="process__step-line"></div></div>
-          <div class="process__step-content">
-            <h3>Develop</h3>
-            <p>Hand-coded, responsive, and fast. We build your site from scratch with clean, modern code.</p>
-          </div>
+        <div class="process__step anim-item">
+          <span class="process__num">03</span>
+          <h3>Develop</h3>
+          <p>Hand-coded, responsive, and fast &mdash; built from scratch with clean code.</p>
         </div>
-        <div class="process__step reveal-up">
-          <div class="process__step-num"><span>04</span><div class="process__step-line"></div></div>
-          <div class="process__step-content">
-            <h3>Launch</h3>
-            <p>We deploy, test across devices, set up analytics, and make sure everything is flawless on day one.</p>
-          </div>
+        <div class="process__step anim-item">
+          <span class="process__num">04</span>
+          <h3>Launch</h3>
+          <p>We deploy, test across devices, and make sure everything is flawless.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- PRICING -->
-  <section class="pricing" id="pricing">
-    <div class="container">
-      <p class="tag reveal-up">[ Packages ]</p>
-      <h2 class="section-headline reveal-up">
-        Transparent<br><span class="gradient-text">pricing.</span>
-      </h2>
+  <!-- 7. PRICING -->
+  <section class="slide slide--pricing" id="pricing">
+    <div class="slide__inner container">
+      <p class="tag anim-item">[ Packages ]</p>
+      <h2 class="slide__title anim-item">Transparent <span class="gradient-text">pricing.</span></h2>
       <div class="pricing__grid">
-        <div class="pricing__card reveal-up">
-          <div class="pricing__card-head">
-            <span class="pricing__tier">Starter</span>
-            <p>A clean, professional website to get you online.</p>
-          </div>
+        <div class="pricing__card anim-item">
+          <span class="pricing__tier">Starter</span>
+          <p class="pricing__desc">A clean, professional website to get you online.</p>
           <div class="pricing__amount">$1,500<span>/one-time</span></div>
           <ul>
-            <li>Custom designed website (3&ndash;5 pages)</li>
+            <li>Custom website (3–5 pages)</li>
             <li>Mobile responsive</li>
-            <li>Contact form integration</li>
-            <li>Basic on-page SEO</li>
+            <li>Contact form + basic SEO</li>
             <li>1 round of revisions</li>
           </ul>
           <a href="#contact" class="btn btn--outline btn--full">Choose Plan</a>
         </div>
-        <div class="pricing__card pricing__card--featured reveal-up">
+        <div class="pricing__card pricing__card--featured anim-item">
           <div class="pricing__badge">Popular</div>
-          <div class="pricing__card-head">
-            <span class="pricing__tier">Growth</span>
-            <p>A high-converting site built to scale your business.</p>
-          </div>
+          <span class="pricing__tier">Growth</span>
+          <p class="pricing__desc">A high-converting site built to scale.</p>
           <div class="pricing__amount">$3,500<span>/one-time</span></div>
           <ul>
-            <li>Custom website (5&ndash;10 pages)</li>
-            <li>Advanced UI/UX design</li>
-            <li>Animations &amp; interactions</li>
+            <li>Custom website (5–10 pages)</li>
+            <li>Advanced UI/UX + animations</li>
             <li>SEO &amp; analytics setup</li>
             <li>Speed optimization</li>
             <li>2 rounds of revisions</li>
           </ul>
           <a href="#contact" class="btn btn--primary btn--full">Choose Plan</a>
         </div>
-        <div class="pricing__card reveal-up">
-          <div class="pricing__card-head">
-            <span class="pricing__tier">Premium</span>
-            <p>Full-service design, development &amp; ongoing care.</p>
-          </div>
+        <div class="pricing__card anim-item">
+          <span class="pricing__tier">Premium</span>
+          <p class="pricing__desc">Full-service design, dev &amp; ongoing care.</p>
           <div class="pricing__amount">$6,000<span>+ $500/mo</span></div>
           <ul>
-            <li>Fully custom website &amp; design system</li>
-            <li>Complex interactions &amp; animations</li>
-            <li>CMS or e-commerce integration</li>
+            <li>Fully custom website + design system</li>
+            <li>Complex interactions &amp; CMS</li>
             <li>Ongoing updates &amp; maintenance</li>
             <li>Priority support</li>
             <li>Monthly performance reports</li>
@@ -342,123 +285,61 @@
     </div>
   </section>
 
-  <!-- TESTIMONIALS -->
-  <section class="testimonials" id="testimonials">
-    <div class="container">
-      <p class="tag reveal-up">[ Testimonials ]</p>
-      <div class="testimonials__featured reveal-up">
-        <blockquote>
-          <p>&ldquo;Nexus designed a website that completely changed how clients see us. Within weeks we saw a 200% increase in inbound leads. The craft and attention to detail is <em>unmatched.</em>&rdquo;</p>
-        </blockquote>
-        <div class="testimonials__author">
-          <div class="testimonials__avatar">JR</div>
-          <div>
-            <strong>James Rivera</strong>
-            <span>CEO, Meridian Law Group</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonials__row">
-        <div class="testimonial-sm reveal-up">
-          <p>&ldquo;The website they built for us is stunning. Our revenue doubled in 3 months &mdash; it practically sells for us.&rdquo;</p>
-          <div class="testimonials__author">
-            <div class="testimonials__avatar">SK</div>
-            <div>
-              <strong>Sarah Kim</strong>
-              <span>Founder, Aura Skincare</span>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-sm reveal-up">
-          <p>&ldquo;Best website investment we&rsquo;ve ever made. It&rsquo;s become our #1 source of new clients.&rdquo;</p>
-          <div class="testimonials__author">
-            <div class="testimonials__avatar">MT</div>
-            <div>
-              <strong>Marcus Thompson</strong>
-              <span>Director, Atlas Ventures</span>
-            </div>
-          </div>
+  <!-- 8. TESTIMONIALS -->
+  <section class="slide slide--testimonials" id="testimonials">
+    <div class="slide__inner slide__center">
+      <p class="tag anim-item">[ Testimonials ]</p>
+      <blockquote class="testimonial anim-item">
+        <p>&ldquo;Nexus designed a website that completely changed how clients see us. Within weeks we saw a 200% increase in inbound leads. The craft and attention to detail is <em>unmatched.</em>&rdquo;</p>
+      </blockquote>
+      <div class="testimonial__author anim-item">
+        <div class="testimonial__avatar">JR</div>
+        <div>
+          <strong>James Rivera</strong>
+          <span>CEO, Meridian Law Group</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- BIG CTA -->
-  <section class="big-cta" id="cta">
-    <div class="container">
-      <h2 class="big-cta__title reveal-up">
-        <span class="line"><span class="line__inner">Ready to</span></span>
-        <span class="line"><span class="line__inner gradient-text">elevate?</span></span>
-      </h2>
-      <div class="big-cta__actions reveal-up">
-        <a href="#contact" class="btn btn--primary btn--lg">Start Your Project</a>
-        <a href="#contact" class="btn btn--ghost btn--lg">Book a Call <span class="btn__arrow">&rarr;</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="contact" id="contact">
-    <div class="container">
+  <!-- 9. CONTACT + FOOTER -->
+  <section class="slide slide--contact" id="contact">
+    <div class="slide__inner container">
       <div class="contact__grid">
         <div class="contact__left">
-          <p class="tag reveal-up">[ Contact ]</p>
-          <h2 class="section-headline reveal-up">
-            Let's build<br>your next <span class="gradient-text">website.</span>
+          <p class="tag anim-item">[ Contact ]</p>
+          <h2 class="contact__headline anim-item">
+            Let's build your<br>next <span class="gradient-text">website.</span>
           </h2>
-          <p class="contact__desc reveal-up">
-            Tell us about your project and we'll get back within 24 hours with a free consultation and proposal.
+          <p class="contact__desc anim-item">
+            Tell us about your project and we'll get back within 24 hours.
           </p>
-          <div class="contact__details reveal-up">
+          <div class="contact__details anim-item">
             <a href="mailto:hello@nexusdigital.agency">hello@nexusdigital.agency</a>
-            <a href="tel:+15551234567">(555) 123-4567</a>
           </div>
         </div>
-        <form class="contact__form reveal-up" id="contactForm">
+        <form class="contact__form anim-item" id="contactForm">
           <div class="form-row">
-            <div class="form-group">
-              <input type="text" id="name" name="name" placeholder="Name" required autocomplete="name">
-            </div>
-            <div class="form-group">
-              <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email">
-            </div>
+            <input type="text" name="name" placeholder="Name" required autocomplete="name">
+            <input type="email" name="email" placeholder="Email" required autocomplete="email">
           </div>
-          <div class="form-group">
-            <input type="text" id="business" name="business" placeholder="Business name" autocomplete="organization">
-          </div>
-          <div class="form-group">
-            <textarea id="details" name="details" rows="5" placeholder="Tell us about your project..." required></textarea>
-          </div>
+          <input type="text" name="business" placeholder="Business name" autocomplete="organization">
+          <textarea name="details" rows="3" placeholder="Tell us about your project..." required></textarea>
           <button type="submit" class="btn btn--primary btn--full">Send Message <span class="btn__arrow">&rarr;</span></button>
         </form>
       </div>
+      <footer class="footer">
+        <div class="footer__inner">
+          <span class="footer__copy">&copy; 2026 Nexus Digital</span>
+          <div class="footer__social">
+            <a href="#" aria-label="Twitter/X">X</a>
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="LinkedIn">LI</a>
+          </div>
+        </div>
+      </footer>
     </div>
   </section>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer__top">
-        <a href="#hero" class="footer__logo">NEXUS<span>.</span></a>
-        <div class="footer__nav">
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#work">Work</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#contact">Contact</a>
-        </div>
-        <p class="footer__tagline">Web Design Studio</p>
-        <div class="footer__social">
-            <a href="#" aria-label="Twitter/X">X</a>
-          <a href="#" aria-label="Instagram">IG</a>
-          <a href="#" aria-label="LinkedIn">LI</a>
-        </div>
-      </div>
-      <div class="footer__bottom">
-        <p>&copy; 2026 Nexus Digital. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
 
   <script src="script.js"></script>
 </body>

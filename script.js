@@ -37,7 +37,8 @@
   const zoomHint = document.getElementById('zoomHint');
   const rocketRide = document.getElementById('rocketRide');
   const rocketShip = document.getElementById('rocketShip');
-  const rocketLabel = document.getElementById('rocketLabel');
+  const rocketCanvas = document.getElementById('rocketCanvas');
+  const rocketCtx = rocketCanvas ? rocketCanvas.getContext('2d') : null;
   const starCanvas = document.getElementById('starfield');
   const ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
@@ -85,57 +86,83 @@
     // Gradient text hue (mouse-driven, see mousemove)
     updateGradientHue();
 
-    // Rocket ride transition — full-screen zoom
-    if (rocketRide && rocketShip) {
+    // Rocket ride — diagonal flyby across full screen with trail
+    if (rocketRide && rocketShip && rocketCanvas && rocketCtx) {
       var rTop = rocketRide.offsetTop;
       var rH = rocketRide.offsetHeight - wh;
       var rp = Math.max(0, Math.min(1, (current - rTop) / rH));
 
+      // Resize canvas to match viewport
+      if (rocketCanvas.width !== ww || rocketCanvas.height !== wh) {
+        rocketCanvas.width = ww;
+        rocketCanvas.height = wh;
+      }
+
+      // Clear trail canvas
+      rocketCtx.clearRect(0, 0, ww, wh);
+
       if (rp > 0 && rp < 1) {
-        /*
-          Phase 1 (0 → 0.4): Rocket visible, starts at scale 1, slowly grows
-                              Label shows briefly
-          Phase 2 (0.4 → 0.75): Rocket scales up massively, body fills viewport
-                                 Like zooming INTO the rocket
-          Phase 3 (0.75 → 1.0): Screen is fully dark (rocket body = bg color)
-                                 Opacity fades to 0, revealing next section
-        */
-        var scale, opacity;
+        // Ease-in-out for smooth movement
+        var ep = rp < 0.5
+          ? 4 * rp * rp * rp
+          : 1 - Math.pow(-2 * rp + 2, 3) / 2;
 
-        if (rp < 0.4) {
-          // Gentle grow — 1x to 3x
-          var p1 = rp / 0.4;
-          scale = 1 + p1 * p1 * 2;
-          opacity = 1;
-        } else if (rp < 0.75) {
-          // Explosive zoom — 3x to 60x (body fills entire screen)
-          var p2 = (rp - 0.4) / 0.35;
-          var ep2 = p2 * p2 * p2; // cubic ease-in for acceleration feel
-          scale = 3 + ep2 * 57;
-          opacity = 1;
-        } else {
-          // Hold at max scale, fade out
-          var p3 = (rp - 0.75) / 0.25;
-          scale = 60;
-          opacity = 1 - p3;
+        // Path: bottom-right to top-left, diagonal
+        var startX = ww + 150;
+        var startY = wh + 200;
+        var endX = -350;
+        var endY = -300;
+        var rx = startX + (endX - startX) * ep;
+        var ry = startY + (endY - startY) * ep;
+
+        // Rotation: tilted along flight path (-45deg roughly, pointing up-left)
+        var angle = Math.atan2(endY - startY, endX - startX) - Math.PI / 2;
+
+        // Position rocket
+        rocketShip.style.left = rx + 'px';
+        rocketShip.style.top = ry + 'px';
+        rocketShip.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'rad)';
+        rocketShip.style.opacity = 1;
+
+        // Draw glowing trail on canvas
+        // Trail is a series of points behind the rocket
+        var trailLen = 40;
+        for (var i = 0; i < trailLen; i++) {
+          var tp = Math.max(0, ep - (i * 0.008));
+          if (tp <= 0) break;
+          var tx = startX + (endX - startX) * tp;
+          var ty = startY + (endY - startY) * tp;
+          var alpha = (1 - i / trailLen) * 0.5;
+          var radius = 3 + (1 - i / trailLen) * 4;
+          rocketCtx.beginPath();
+          rocketCtx.arc(tx, ty, radius, 0, Math.PI * 2);
+          rocketCtx.fillStyle = 'rgba(108,92,231,' + alpha + ')';
+          rocketCtx.fill();
         }
 
-        rocketShip.style.transform = 'scale(' + scale + ')';
-        rocketShip.style.opacity = opacity;
-
-        // Label visible only in phase 1
-        if (rocketLabel) {
-          if (rp > 0.02 && rp < 0.3) {
-            var lp = rp < 0.1 ? (rp - 0.02) / 0.08 : (0.3 - rp) / 0.2;
-            rocketLabel.style.opacity = Math.max(0, Math.min(1, lp));
-          } else {
-            rocketLabel.style.opacity = 0;
-          }
+        // Draw a bright core trail (thinner, brighter)
+        var coreLen = 20;
+        for (var j = 0; j < coreLen; j++) {
+          var cp = Math.max(0, ep - (j * 0.004));
+          if (cp <= 0) break;
+          var cx2 = startX + (endX - startX) * cp;
+          var cy2 = startY + (endY - startY) * cp;
+          var ca = (1 - j / coreLen) * 0.8;
+          rocketCtx.beginPath();
+          rocketCtx.arc(cx2, cy2, 2, 0, Math.PI * 2);
+          rocketCtx.fillStyle = 'rgba(162,155,254,' + ca + ')';
+          rocketCtx.fill();
         }
+
+        // Ambient glow around rocket position
+        var grd = rocketCtx.createRadialGradient(rx, ry, 0, rx, ry, 150);
+        grd.addColorStop(0, 'rgba(108,92,231,0.12)');
+        grd.addColorStop(1, 'transparent');
+        rocketCtx.fillStyle = grd;
+        rocketCtx.fillRect(rx - 150, ry - 150, 300, 300);
+
       } else {
-        rocketShip.style.transform = 'scale(1)';
-        rocketShip.style.opacity = rp >= 1 ? 0 : 1;
-        if (rocketLabel) rocketLabel.style.opacity = 0;
+        rocketShip.style.opacity = 0;
       }
     }
 

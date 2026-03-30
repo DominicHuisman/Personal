@@ -37,24 +37,25 @@
     raf = requestAnimationFrame(smoothScroll);
   }
 
-  /* ----- SCROLL-DRIVEN GRADIENT TEXT ----- */
+  /* ----- MOUSE-DRIVEN GRADIENT TEXT ----- */
   var gradientEls = [];
+  var mouseXRatio = 0;
+  var mouseYRatio = 0;
 
   function initGradientText() {
     gradientEls = document.querySelectorAll('.gradient-text');
+    document.addEventListener('mousemove', function (e) {
+      mouseXRatio = e.clientX / ww;  // 0 → 1
+      mouseYRatio = e.clientY / wh;  // 0 → 1
+    });
   }
 
   function updateGradientText() {
     if (!gradientEls.length) return;
-    var totalHeight = parseFloat(body.style.height) || content.scrollHeight;
-    var maxScroll = totalHeight - wh;
-    if (maxScroll <= 0) return;
-    var progress = current / maxScroll; // 0 → 1
-    if (progress < 0) progress = 0;
-    if (progress > 1) progress = 1;
-    var pos = progress * 300; // sweep across 0%→300% of background-size
+    var posX = mouseXRatio * 300;
+    var posY = mouseYRatio * 100;
     for (var i = 0; i < gradientEls.length; i++) {
-      gradientEls[i].style.backgroundPosition = pos + '% 50%';
+      gradientEls[i].style.backgroundPosition = posX + '% ' + posY + '%';
     }
   }
 

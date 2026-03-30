@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -121,36 +121,21 @@
       </div>
 
       <!-- ============================
-           SCROLL-SCRUBBED STATEMENT
-           ============================ -->
-      <section class="scroll-statement" id="scrollStatement">
-        <div class="scroll-statement__inner">
-          <div class="scrub-line" data-scrub-line>NO BORING</div>
-          <div class="scrub-line" data-scrub-line>AGENCIES.</div>
-          <div class="scrub-line scrub-line--accent" data-scrub-line>JUST</div>
-          <div class="scrub-line scrub-line--gradient" data-scrub-line>REAL GROWTH.</div>
-          <div class="scroll-sticker scroll-sticker--purple" data-scroll-sticker></div>
-          <div class="scroll-sticker scroll-sticker--teal" data-scroll-sticker></div>
-          <div class="scroll-sticker scroll-sticker--warm" data-scroll-sticker></div>
-        </div>
-      </section>
-
-      <!-- ============================
            THE DIFFERENCE
            ============================ -->
-      <section class="section difference" id="difference">
+      <section class="section difference" id="difference" data-scroll-section>
         <div class="container">
           <div class="diff__grid">
-            <div class="diff__card reveal" data-delay="0.1">
-              <span class="diff__num">01</span>
+            <div class="diff__card scroll-card" data-scroll-card data-card-index="0">
+              <span class="diff__num" data-counter>01</span>
               <p>We don't just build websites.<br><strong>We build revenue machines.</strong></p>
             </div>
-            <div class="diff__card reveal" data-delay="0.2">
-              <span class="diff__num">02</span>
+            <div class="diff__card scroll-card" data-scroll-card data-card-index="1">
+              <span class="diff__num" data-counter>02</span>
               <p>We manage, optimize, and scale<br><strong>every part of your business.</strong></p>
             </div>
-            <div class="diff__card reveal" data-delay="0.3">
-              <span class="diff__num">03</span>
+            <div class="diff__card scroll-card" data-scroll-card data-card-index="2">
+              <span class="diff__num" data-counter>03</span>
               <p>Everything is designed for<br><strong>performance, not decoration.</strong></p>
             </div>
           </div>
@@ -160,58 +145,75 @@
       <!-- ============================
            SERVICES / PACKAGES
            ============================ -->
-      <section class="section services" id="services">
+      <section class="section services" id="services" data-scroll-section>
         <div class="container">
-          <p class="tag reveal">[ Packages ]</p>
-          <h2 class="section-title reveal">Choose your <span class="gradient-text">growth plan.</span></h2>
-          <div class="packages">
-            <div class="package reveal" data-delay="0.1">
-              <div class="package__head">
-                <span class="package__tier">Starter</span>
-                <p class="package__desc">Get online with a premium foundation.</p>
-                <div class="package__price">$1,500<span>/one-time</span></div>
+          <p class="tag scroll-fade-up">[ Packages ]</p>
+          <h2 class="section-title scroll-fade-up" data-split-words>Choose your <span class="gradient-text">growth plan.</span></h2>
+          <div class="packages-deck" id="packagesDeck">
+            <div class="packages-deck__cards">
+              <div class="package-card" data-deck-card="0">
+                <div class="package-card__inner">
+                  <div class="package__head">
+                    <span class="package__tier">Starter</span>
+                    <p class="package__desc">Get online with a premium foundation.</p>
+                    <div class="package__price">$1,500<span>/one-time</span></div>
+                  </div>
+                  <ul class="package__list">
+                    <li>Custom website design (3–5 pages)</li>
+                    <li>Mobile responsive</li>
+                    <li>Basic SEO setup</li>
+                    <li>Contact form integration</li>
+                    <li>Launch &amp; deployment</li>
+                  </ul>
+                  <a href="#contact" class="btn btn--outline btn--full">Get Started</a>
+                </div>
               </div>
-              <ul class="package__list">
-                <li>Custom website design (3–5 pages)</li>
-                <li>Mobile responsive</li>
-                <li>Basic SEO setup</li>
-                <li>Contact form integration</li>
-                <li>Launch &amp; deployment</li>
-              </ul>
-              <a href="#contact" class="btn btn--outline btn--full">Get Started</a>
+              <div class="package-card" data-deck-card="1">
+                <div class="package-card__badge">Most Popular</div>
+                <div class="package-card__inner">
+                  <div class="package__head">
+                    <span class="package__tier">Growth</span>
+                    <p class="package__desc">Website + management to scale fast.</p>
+                    <div class="package__price">$3,500<span>/one-time + $500/mo</span></div>
+                  </div>
+                  <ul class="package__list">
+                    <li>Custom website (5–10 pages)</li>
+                    <li>Business management system</li>
+                    <li>Ads + optimization</li>
+                    <li>Analytics &amp; conversion tracking</li>
+                    <li>Monthly performance reports</li>
+                    <li>2 rounds of revisions</li>
+                  </ul>
+                  <a href="#contact" class="btn btn--primary btn--full">Choose Growth</a>
+                </div>
+              </div>
+              <div class="package-card" data-deck-card="2">
+                <div class="package-card__inner">
+                  <div class="package__head">
+                    <span class="package__tier">Dominate</span>
+                    <p class="package__desc">Full-service. Total business domination.</p>
+                    <div class="package__price">$6,000<span>+ $1,000/mo</span></div>
+                  </div>
+                  <ul class="package__list">
+                    <li>Fully custom website &amp; design system</li>
+                    <li>Full business management</li>
+                    <li>Paid ads + sales funnels</li>
+                    <li>Automation systems</li>
+                    <li>Scaling strategy &amp; execution</li>
+                    <li>Priority support</li>
+                  </ul>
+                  <a href="#contact" class="btn btn--outline btn--full">Go Premium</a>
+                </div>
+              </div>
             </div>
-            <div class="package package--featured reveal" data-delay="0.2">
-              <div class="package__badge">Most Popular</div>
-              <div class="package__head">
-                <span class="package__tier">Growth</span>
-                <p class="package__desc">Website + management to scale fast.</p>
-                <div class="package__price">$3,500<span>/one-time + $500/mo</span></div>
+            <div class="packages-deck__nav">
+              <button class="deck-nav__btn deck-nav__prev" aria-label="Previous card">&#8592;</button>
+              <div class="deck-nav__dots">
+                <button class="deck-dot active" data-dot="0"></button>
+                <button class="deck-dot" data-dot="1"></button>
+                <button class="deck-dot" data-dot="2"></button>
               </div>
-              <ul class="package__list">
-                <li>Custom website (5–10 pages)</li>
-                <li>Business management system</li>
-                <li>Ads + optimization</li>
-                <li>Analytics &amp; conversion tracking</li>
-                <li>Monthly performance reports</li>
-                <li>2 rounds of revisions</li>
-              </ul>
-              <a href="#contact" class="btn btn--primary btn--full">Choose Growth</a>
-            </div>
-            <div class="package reveal" data-delay="0.3">
-              <div class="package__head">
-                <span class="package__tier">Dominate</span>
-                <p class="package__desc">Full-service. Total business domination.</p>
-                <div class="package__price">$6,000<span>+ $1,000/mo</span></div>
-              </div>
-              <ul class="package__list">
-                <li>Fully custom website &amp; design system</li>
-                <li>Full business management</li>
-                <li>Paid ads + sales funnels</li>
-                <li>Automation systems</li>
-                <li>Scaling strategy &amp; execution</li>
-                <li>Priority support</li>
-              </ul>
-              <a href="#contact" class="btn btn--outline btn--full">Go Premium</a>
+              <button class="deck-nav__btn deck-nav__next" aria-label="Next card">&#8594;</button>
             </div>
           </div>
         </div>
@@ -220,47 +222,47 @@
       <!-- ============================
            WHAT YOU GET
            ============================ -->
-      <section class="section features" id="features">
+      <section class="section features" id="features" data-scroll-section>
         <div class="container">
-          <p class="tag reveal">[ What You Get ]</p>
-          <h2 class="section-title reveal">Everything you need to <span class="gradient-text">win online.</span></h2>
+          <p class="tag scroll-fade-up">[ What You Get ]</p>
+          <h2 class="section-title scroll-fade-up" data-split-words>Everything you need to <span class="gradient-text">win online.</span></h2>
           <div class="features__grid">
-            <div class="feature reveal">
+            <div class="feature scroll-card" data-scroll-card data-card-index="0">
               <div class="feature__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
               </div>
               <h3>Custom Websites</h3>
               <p>Hand-coded, fast, and designed to convert visitors into customers.</p>
             </div>
-            <div class="feature reveal" data-delay="0.08">
+            <div class="feature scroll-card" data-scroll-card data-card-index="1">
               <div class="feature__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
               </div>
               <h3>Business Automation</h3>
               <p>Systems that run 24/7 so you can focus on what matters.</p>
             </div>
-            <div class="feature reveal" data-delay="0.16">
+            <div class="feature scroll-card" data-scroll-card data-card-index="2">
               <div class="feature__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               </div>
               <h3>Lead Generation</h3>
               <p>Funnels and systems engineered to bring you qualified leads daily.</p>
             </div>
-            <div class="feature reveal" data-delay="0.24">
+            <div class="feature scroll-card" data-scroll-card data-card-index="3">
               <div class="feature__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
               </div>
               <h3>Branding &amp; Positioning</h3>
               <p>Make your business look as powerful as it actually is.</p>
             </div>
-            <div class="feature reveal" data-delay="0.32">
+            <div class="feature scroll-card" data-scroll-card data-card-index="4">
               <div class="feature__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               </div>
               <h3>Conversion Optimization</h3>
               <p>Every click, scroll, and interaction designed to drive results.</p>
             </div>
-            <div class="feature reveal" data-delay="0.4">
+            <div class="feature scroll-card" data-scroll-card data-card-index="5">
               <div class="feature__icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
               </div>
@@ -274,34 +276,38 @@
       <!-- ============================
            PROCESS
            ============================ -->
-      <section class="section process" id="process">
+      <section class="section process" id="process" data-scroll-section>
         <div class="container">
-          <p class="tag reveal">[ The System ]</p>
-          <h2 class="section-title reveal">Four steps to <span class="gradient-text">dominance.</span></h2>
+          <p class="tag scroll-fade-up">[ The System ]</p>
+          <h2 class="section-title scroll-fade-up" data-split-words>Four steps to <span class="gradient-text">dominance.</span></h2>
           <div class="process__track">
-            <div class="process__step reveal">
-              <div class="process__num">01</div>
+            <div class="process__step scroll-slide-in" data-scroll-slide data-slide-index="0">
+              <div class="process__num" data-counter>01</div>
+              <div class="process__line"></div>
               <div class="process__body">
                 <h3>Audit Your Business</h3>
                 <p>We analyze everything — your market, competitors, and current systems — to find the gaps.</p>
               </div>
             </div>
-            <div class="process__step reveal" data-delay="0.1">
-              <div class="process__num">02</div>
+            <div class="process__step scroll-slide-in" data-scroll-slide data-slide-index="1">
+              <div class="process__num" data-counter>02</div>
+              <div class="process__line"></div>
               <div class="process__body">
                 <h3>Build Your System</h3>
                 <p>We design and develop every asset — website, funnels, automations — built to perform.</p>
               </div>
             </div>
-            <div class="process__step reveal" data-delay="0.2">
-              <div class="process__num">03</div>
+            <div class="process__step scroll-slide-in" data-scroll-slide data-slide-index="2">
+              <div class="process__num" data-counter>03</div>
+              <div class="process__line"></div>
               <div class="process__body">
                 <h3>Launch &amp; Optimize</h3>
                 <p>Everything goes live. We track data, optimize conversions, and refine constantly.</p>
               </div>
             </div>
-            <div class="process__step reveal" data-delay="0.3">
-              <div class="process__num">04</div>
+            <div class="process__step scroll-slide-in" data-scroll-slide data-slide-index="3">
+              <div class="process__num" data-counter>04</div>
+              <div class="process__line"></div>
               <div class="process__body">
                 <h3>Scale Aggressively</h3>
                 <p>Growth mode. We pour fuel on what's working and scale your business to its potential.</p>
@@ -314,14 +320,18 @@
       <!-- ============================
            WORK / PROJECTS
            ============================ -->
-      <section class="section work" id="work">
+      <section class="section work" id="work" data-scroll-section>
         <div class="container">
-          <p class="tag reveal">[ Selected Work ]</p>
-          <h2 class="section-title reveal">Projects that <span class="gradient-text">speak.</span></h2>
-          <div class="work__grid">
-            <article class="work__card reveal" data-cursor-text="View">
-              <div class="work__img-wrap">
-                <div class="work__img" style="background: linear-gradient(135deg, #1a1a2e, #16213e);"></div>
+          <p class="tag scroll-fade-up">[ Selected Work ]</p>
+          <h2 class="section-title scroll-fade-up" data-split-words>Projects that <span class="gradient-text">speak.</span></h2>
+        </div>
+        <div class="work__horizontal" id="workHorizontal">
+          <div class="work__horizontal-inner">
+            <div class="work__horizontal-track" id="workTrack">
+            <article class="work__card-h" data-cursor-text="View">
+              <div class="work__img-wrap-h">
+                <div class="work__img-h" style="background: linear-gradient(135deg, #1a1a2e, #16213e);"></div>
+                <div class="work__reveal-mask"></div>
                 <div class="work__overlay">
                   <span class="work__cat">Website + SEO</span>
                 </div>
@@ -331,9 +341,10 @@
                 <p>Full rebrand and website. Client inquiries up 180%.</p>
               </div>
             </article>
-            <article class="work__card reveal" data-delay="0.1" data-cursor-text="View">
-              <div class="work__img-wrap">
-                <div class="work__img" style="background: linear-gradient(135deg, #0f0c29, #302b63);"></div>
+            <article class="work__card-h" data-cursor-text="View">
+              <div class="work__img-wrap-h">
+                <div class="work__img-h" style="background: linear-gradient(135deg, #0f0c29, #302b63);"></div>
+                <div class="work__reveal-mask"></div>
                 <div class="work__overlay">
                   <span class="work__cat">E-Commerce + Growth</span>
                 </div>
@@ -343,9 +354,10 @@
                 <p>E-commerce platform. Revenue doubled in 90 days.</p>
               </div>
             </article>
-            <article class="work__card reveal" data-delay="0.15" data-cursor-text="View">
-              <div class="work__img-wrap">
-                <div class="work__img" style="background: linear-gradient(135deg, #1a1a2e, #0a3d62);"></div>
+            <article class="work__card-h" data-cursor-text="View">
+              <div class="work__img-wrap-h">
+                <div class="work__img-h" style="background: linear-gradient(135deg, #1a1a2e, #0a3d62);"></div>
+                <div class="work__reveal-mask"></div>
                 <div class="work__overlay">
                   <span class="work__cat">Website + Branding</span>
                 </div>
@@ -355,9 +367,10 @@
                 <p>Investor-facing site with dynamic portfolio showcase.</p>
               </div>
             </article>
-            <article class="work__card reveal" data-delay="0.2" data-cursor-text="View">
-              <div class="work__img-wrap">
-                <div class="work__img" style="background: linear-gradient(135deg, #1e1e3f, #3d1f5c);"></div>
+            <article class="work__card-h" data-cursor-text="View">
+              <div class="work__img-wrap-h">
+                <div class="work__img-h" style="background: linear-gradient(135deg, #1e1e3f, #3d1f5c);"></div>
+                <div class="work__reveal-mask"></div>
                 <div class="work__overlay">
                   <span class="work__cat">Full Digital System</span>
                 </div>
@@ -368,16 +381,17 @@
               </div>
             </article>
           </div>
+          </div>
         </div>
       </section>
 
       <!-- ============================
            TESTIMONIALS
            ============================ -->
-      <section class="section testimonials" id="testimonials">
+      <section class="section testimonials" id="testimonials" data-scroll-section>
         <div class="container">
-          <p class="tag reveal">[ Results ]</p>
-          <div class="testimonial__featured reveal">
+          <p class="tag scroll-fade-up">[ Results ]</p>
+          <div class="testimonial__featured scroll-fade-up">
             <blockquote>
               <p>&ldquo;Nexus didn&rsquo;t just build us a website. They built us a <em class="gradient-text">growth engine.</em> Our inbound leads tripled in the first month.&rdquo;</p>
             </blockquote>
@@ -390,14 +404,14 @@
             </div>
           </div>
           <div class="testimonials__row">
-            <div class="testimonial-sm reveal">
+            <div class="testimonial-sm scroll-fade-up">
               <p>&ldquo;They handle everything. Our revenue has doubled since working with Nexus.&rdquo;</p>
               <div class="testimonial__author">
                 <div class="testimonial__avatar">SK</div>
                 <div><strong>Sarah Kim</strong><span>Founder, Aura Skincare</span></div>
               </div>
             </div>
-            <div class="testimonial-sm reveal" data-delay="0.1">
+            <div class="testimonial-sm scroll-fade-up">
               <p>&ldquo;Best investment we&rsquo;ve made. Nexus is our unfair advantage.&rdquo;</p>
               <div class="testimonial__author">
                 <div class="testimonial__avatar">MT</div>
@@ -411,14 +425,14 @@
       <!-- ============================
            FINAL CTA
            ============================ -->
-      <section class="section big-cta" id="cta">
+      <section class="section big-cta" id="cta" data-scroll-section data-cta-scale>
         <div class="container">
-          <h2 class="big-cta__title">
+          <h2 class="big-cta__title" data-lines>
             <span class="line"><span class="line__inner">READY TO</span></span>
             <span class="line"><span class="line__inner gradient-text">SCALE?</span></span>
           </h2>
-          <p class="big-cta__sub reveal">Let&rsquo;s build something powerful.</p>
-          <div class="big-cta__actions reveal" data-delay="0.15">
+          <p class="big-cta__sub scroll-fade-up">Let&rsquo;s build something powerful.</p>
+          <div class="big-cta__actions scroll-fade-up">
             <a href="#contact" class="btn btn--primary btn--xl">Book a Call</a>
           </div>
         </div>
@@ -427,22 +441,22 @@
       <!-- ============================
            CONTACT
            ============================ -->
-      <section class="section contact" id="contact">
+      <section class="section contact" id="contact" data-scroll-section>
         <div class="container">
           <div class="contact__grid">
             <div class="contact__left">
-              <p class="tag reveal">[ Contact ]</p>
-              <h2 class="section-title reveal">
+              <p class="tag scroll-fade-up">[ Contact ]</p>
+              <h2 class="section-title scroll-fade-up">
                 Let's <span class="gradient-text">talk.</span>
               </h2>
-              <p class="contact__desc reveal">
+              <p class="contact__desc scroll-fade-up">
                 Tell us about your business and we&rsquo;ll get back within 24 hours with a free strategy call.
               </p>
-              <div class="contact__details reveal">
+              <div class="contact__details scroll-fade-up">
                 <a href="mailto:hello@nexusdigital.agency">hello@nexusdigital.agency</a>
               </div>
             </div>
-            <form class="contact__form reveal" id="contactForm">
+            <form class="contact__form scroll-fade-up" id="contactForm">
               <div class="form-row">
                 <div class="form-group"><input type="text" name="name" placeholder="Name" required autocomplete="name"></div>
                 <div class="form-group"><input type="email" name="email" placeholder="Email" required autocomplete="email"></div>
@@ -485,6 +499,6 @@
     </div><!-- /smooth-content -->
   </div><!-- /smooth-wrapper -->
 
-  <script src="script.js"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>

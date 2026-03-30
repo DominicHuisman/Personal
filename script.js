@@ -18,9 +18,9 @@
   }
   advanceLoader();
 
-  window.addEventListener('load', () => {
+  window.addEventListener('load', function() {
     if (preloaderFill) preloaderFill.style.width = '100%';
-    setTimeout(() => {
+    setTimeout(function() {
       if (preloader) preloader.classList.add('done');
       document.body.style.overflow = '';
       initAfterLoad();
@@ -28,30 +28,62 @@
   });
 
   /* ---------- DOM ---------- */
-  const wrapper = document.getElementById('smooth-wrapper');
-  const content = document.getElementById('smooth-content');
-  const nav = document.querySelector('.nav');
-  const hero = document.querySelector('.hero');
-  const zoomSection = document.querySelector('.zoom-intro');
-  const zoomText = document.getElementById('zoomText');
-  const zoomHint = document.getElementById('zoomHint');
-  const scrubSection = document.getElementById('scrollStatement');
-  const starCanvas = document.getElementById('starfield');
-  const ctx = starCanvas ? starCanvas.getContext('2d') : null;
+  var wrapper = document.getElementById('smooth-wrapper');
+  var content = document.getElementById('smooth-content');
+  var nav = document.querySelector('.nav');
+  var hero = document.querySelector('.hero');
+  var zoomSection = document.querySelector('.zoom-intro');
+  var zoomText = document.getElementById('zoomText');
+  var zoomHint = document.getElementById('zoomHint');
+  var scrubSection = document.getElementById('scrollStatement');
+  var starCanvas = document.getElementById('starfield');
+  var ctx = starCanvas ? starCanvas.getContext('2d') : null;
 
   /* ---------- State ---------- */
-  let current = 0, target = 0, ease = 0.075;
-  let wh = window.innerHeight;
-  let ww = window.innerWidth;
-  let contentH = 0;
+  var current = 0, target = 0, ease = 0.075;
+  var wh = window.innerHeight;
+  var ww = window.innerWidth;
+  var contentH = 0;
+
+  /* ---------- Horizontal Scroll State ---------- */
+  var workSection = document.getElementById('work');
+  var workHorizontal = document.getElementById('workHorizontal');
+  var workTrack = document.getElementById('workTrack');
+  var workScrollRange = 0;
+
+  /* ---------- Animation Elements ---------- */
+  var scrollCards = [];
+  var scrollSlides = [];
+  var scrollFadeUps = [];
+  var splitWordSections = [];
+  var parallaxEls = [];
+  var scrubLines = [];
+  var scrubStickers = [];
+
+  /* ---------- Helpers ---------- */
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  // Walk up offsetParent chain to get true top relative to smooth-content
+  function getOffsetTop(el) {
+    var top = 0;
+    var node = el;
+    while (node && node !== content && node !== document.body) {
+      top += node.offsetTop;
+      node = node.offsetParent;
+    }
+    return top;
+  }
 
   /* ---------- Smooth Scroll Engine ---------- */
   function setBodyHeight() {
+    if (workTrack && workHorizontal) {
+      var trackWidth = workTrack.scrollWidth;
+      workScrollRange = Math.max(0, trackWidth - ww + 80);
+      workHorizontal.style.height = workScrollRange + 'px';
+    }
     contentH = content.scrollHeight;
     document.body.style.height = contentH + 'px';
   }
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
 
   function smoothScroll() {
     target = window.scrollY;
@@ -59,188 +91,334 @@
     if (Math.abs(current - target) < 0.5) current = target;
     content.style.transform = 'translate3d(0,' + -current + 'px,0)';
 
-    // Parallax
-    parallaxEls.forEach(el => {
-      const speed = parseFloat(el.dataset.speed) || 0;
-      const rect = el.getBoundingClientRect();
-      const y = (rect.top + rect.height / 2 - wh / 2) * speed;
-      el.style.transform = 'translate3d(0,' + y + 'px,0)';
-    });
-
-    // Text zoom intro
-    if (zoomSection && zoomText) {
-      const zTop = zoomSection.offsetTop;
-      const zH = zoomSection.offsetHeight - wh;
-      const p = Math.max(0, Math.min(1, (current - zTop) / zH));
-      const scale = 1 + p * p * 30;
-      const opacity = p > 0.4 ? 1 - ((p - 0.4) / 0.4) : 1;
-      zoomText.style.transform = 'scale(' + scale + ')';
-      zoomText.style.opacity = Math.max(0, opacity);
-      if (zoomHint) zoomHint.style.opacity = p > 0.08 ? 0 : 1;
-      if (nav) nav.style.opacity = p > 0.05 ? 0 : 1;
+    /* Parallax */
+    for (var pi = 0; pi < parallaxEls.length; pi++) {
+      var pel = parallaxEls[pi];
+      var speed = parseFloat(pel.dataset.speed) || 0;
+      var pTop = getOffsetTop(pel);
+      var relY = pTop - current;
+      var y = (relY + pel.offsetHeight / 2 - wh / 2) * speed;
+      pel.style.transform = 'translate3d(0,' + y + 'px,0)';
     }
 
-    // Gradient text hue (mouse-driven, see mousemove)
+    /* Text zoom intro */
+    if (zoomSection && zoomText) {
+      var zTop = zoomSection.offsetTop;
+      var zH = zoomSection.offsetHeight - wh;
+      var zp = Math.max(0, Math.min(1, (current - zTop) / zH));
+      var zScale = 1 + zp * zp * 30;
+      var zOpacity = zp > 0.4 ? 1 - ((zp - 0.4) / 0.4) : 1;
+      zoomText.style.transform = 'scale(' + zScale + ')';
+      zoomText.style.opacity = Math.max(0, zOpacity);
+      if (zoomHint) zoomHint.style.opacity = zp > 0.08 ? 0 : 1;
+      if (nav) nav.style.opacity = zp > 0.05 ? 0 : 1;
+    }
+
+    /* Gradient hue */
     updateGradientHue();
 
-    // Scroll-scrubbed text reveal (champions4good style)
-    if (scrubSection && scrubLines.length) {
-      var sTop = scrubSection.offsetTop;
-      var scrollStart = sTop - wh;
-      var scrollEnd = sTop - wh * 0.2;
-      var sp = Math.max(0, Math.min(1, (current - scrollStart) / (scrollEnd - scrollStart)));
+    /* Scrub statement text */
+    animateScrubText();
 
-      scrubLines.forEach(function(line, li) {
-        var lineStart = li * 0.12;
-        var isGradient = line.classList.contains('scrub-line--gradient');
+    /* ====== SCROLL-DRIVEN SECTION ANIMATIONS ====== */
 
-        if (isGradient) {
-          // Animate gradient line as one unit
-          var lEnd = lineStart + 0.55;
-          var lp = Math.max(0, Math.min(1, (sp - lineStart) / (lEnd - lineStart)));
-          var eased = 1 - Math.pow(1 - lp, 3);
-          var lx = 80 * (1 - eased);
-          var lSkew = -14 * (1 - eased);
-          line.style.transform = 'translateX(' + lx + 'px) skewX(' + lSkew + 'deg)';
-          line.style.opacity = Math.min(1, lp * 2.5);
-        } else {
-          var chars = line._chars;
-          if (!chars || !chars.length) return;
-          for (var ci = 0; ci < chars.length; ci++) {
-            var charStart = lineStart + (ci / chars.length) * 0.15;
-            var charEnd = charStart + 0.5;
-            var cp = Math.max(0, Math.min(1, (sp - charStart) / (charEnd - charStart)));
-            var e3 = 1 - Math.pow(1 - cp, 3);
-            var cx = 80 * (1 - e3);
-            var cSkew = -14 * (1 - e3);
-            var cScaleY = 0.95 + 0.05 * e3;
-            var cOpacity = Math.min(1, cp * 2.5);
-            chars[ci].style.transform = 'translateX(' + cx + 'px) skewX(' + cSkew + 'deg) scaleY(' + cScaleY + ')';
-            chars[ci].style.opacity = cOpacity;
-          }
-        }
-      });
+    /* 1) Scroll fade-ups */
+    for (var fi = 0; fi < scrollFadeUps.length; fi++) {
+      var fu = scrollFadeUps[fi];
+      if (current + wh * 0.82 > fu._top && !fu.classList.contains('in-view')) {
+        fu.classList.add('in-view');
+      }
+    }
 
-      // Sticker reveals
-      scrubStickers.forEach(function(sticker, i) {
-        var sDelay = 0.35 + i * 0.15;
-        var stP = Math.max(0, Math.min(1, (sp - sDelay) / 0.4));
-        var sEased = 1 - Math.pow(1 - stP, 3);
-        var rotY = -40 * (1 - sEased);
-        var sScale = 1.35 - 0.35 * sEased;
-        sticker.style.transform = 'perspective(1000px) rotateY(' + rotY + 'deg) scale(' + sScale + ')';
-        sticker.style.opacity = sEased;
-      });
+    /* 2) 3D card reveals */
+    for (var ci = 0; ci < scrollCards.length; ci++) {
+      var card = scrollCards[ci];
+      var cStart = card._sectionTop - wh * 0.65;
+      var cEnd = cStart + wh * 0.55;
+      var cp = Math.max(0, Math.min(1, (current - cStart) / (cEnd - cStart)));
+      var cDelay = card._idx * 0.15;
+      var cDelayed = Math.max(0, Math.min(1, (cp - cDelay) / (1 - cDelay)));
+      var cEased = 1 - Math.pow(1 - cDelayed, 3);
+
+      card.style.transform = 'perspective(1200px) rotateY(' + (-8 * (1 - cEased)) +
+        'deg) rotateX(' + (4 * (1 - cEased)) +
+        'deg) translateY(' + (60 * (1 - cEased)) +
+        'px) scale(' + (0.92 + 0.08 * cEased) + ')';
+      card.style.opacity = Math.min(1, cDelayed * 2.5);
+    }
+
+    /* 3) Process step slides */
+    for (var si = 0; si < scrollSlides.length; si++) {
+      var slide = scrollSlides[si];
+      var sStart = slide._sectionTop - wh * 0.55;
+      var sEnd = sStart + wh * 0.65;
+      var sp2 = Math.max(0, Math.min(1, (current - sStart) / (sEnd - sStart)));
+      var sDelay2 = slide._idx * 0.18;
+      var sDelayed = Math.max(0, Math.min(1, (sp2 - sDelay2) / (1 - sDelay2)));
+      var sEased = 1 - Math.pow(1 - sDelayed, 4);
+
+      slide.style.transform = 'translateX(' + (-100 * (1 - sEased)) + 'px)';
+      slide.style.opacity = Math.min(1, sDelayed * 2);
+
+      var sLine = slide.querySelector('.process__line');
+      if (sLine) sLine.style.width = (sEased * 100) + '%';
+    }
+
+    /* 4) Split-word reveals */
+    for (var wi2 = 0; wi2 < splitWordSections.length; wi2++) {
+      var item = splitWordSections[wi2];
+      var wStart = item.top - wh * 0.75;
+      var wEnd = wStart + wh * 0.35;
+      var wp2 = Math.max(0, Math.min(1, (current - wStart) / (wEnd - wStart)));
+
+      for (var wj = 0; wj < item.words.length; wj++) {
+        var wordDelay = (wj / item.words.length) * 0.5;
+        var wwp = Math.max(0, Math.min(1, (wp2 - wordDelay) / (1 - wordDelay)));
+        var wEased = 1 - Math.pow(1 - wwp, 3);
+        item.words[wj].style.transform = 'translateY(' + (40 * (1 - wEased)) + 'px) rotateX(' + (-15 * (1 - wEased)) + 'deg)';
+        item.words[wj].style.opacity = Math.min(1, wwp * 2);
+      }
+    }
+
+    /* 5) Horizontal scroll work section */
+    if (workSection && workTrack && workScrollRange > 0) {
+      var wsTop = getOffsetTop(workHorizontal);
+      var hStart = wsTop - wh * 0.5;
+      var hEnd = hStart + workScrollRange;
+      var hp = Math.max(0, Math.min(1, (current - hStart) / (hEnd - hStart)));
+      workTrack.style.transform = 'translate3d(' + -(hp * workScrollRange) + 'px, 0, 0)';
+
+      var hCards = workTrack.querySelectorAll('.work__card-h');
+      for (var hi = 0; hi < hCards.length; hi++) {
+        var hcp = Math.max(0, Math.min(1, (hp - hi * 0.2) / 0.35));
+        var hEased = 1 - Math.pow(1 - hcp, 3);
+        hCards[hi].style.transform = 'translateY(' + (50 * (1 - hEased)) + 'px)';
+        hCards[hi].style.opacity = Math.min(1, hcp * 2.5);
+
+        var hMask = hCards[hi].querySelector('.work__reveal-mask');
+        if (hMask) hMask.style.transform = 'scaleX(' + (1 - hEased) + ')';
+      }
+    }
+
+    /* 6) Big CTA scale entrance */
+    var ctaEl = document.querySelector('[data-cta-scale]');
+    if (ctaEl) {
+      var ctaTop = getOffsetTop(ctaEl);
+      var ctaP = Math.max(0, Math.min(1, (current - (ctaTop - wh)) / (wh * 0.7)));
+      var ctaEased = 1 - Math.pow(1 - ctaP, 3);
+      var ctaTitle = ctaEl.querySelector('.big-cta__title');
+      if (ctaTitle) {
+        ctaTitle.style.transform = 'scale(' + (0.7 + 0.3 * ctaEased) + ')';
+        ctaTitle.style.opacity = Math.min(1, ctaP * 1.8);
+      }
     }
 
     requestAnimationFrame(smoothScroll);
   }
 
-  /* ---------- Parallax ---------- */
-  let parallaxEls = [];
-  let scrubLines = [];
-  let scrubStickers = [];
+  /* ---------- Scrub Statement Animation ---------- */
+  function animateScrubText() {
+    if (!scrubSection || !scrubLines.length) return;
+    var sTop = scrubSection.offsetTop;
+    var sStart = sTop - wh;
+    var sEnd = sTop - wh * 0.2;
+    var sp = Math.max(0, Math.min(1, (current - sStart) / (sEnd - sStart)));
 
-  /* ---------- Scroll-scrubbed text splitting ---------- */
+    for (var li = 0; li < scrubLines.length; li++) {
+      var line = scrubLines[li];
+      var lineStart = li * 0.12;
+
+      if (line.classList.contains('scrub-line--gradient')) {
+        var lEnd = lineStart + 0.55;
+        var lp = Math.max(0, Math.min(1, (sp - lineStart) / (lEnd - lineStart)));
+        var eased = 1 - Math.pow(1 - lp, 3);
+        line.style.transform = 'translateX(' + (80 * (1 - eased)) + 'px) skewX(' + (-14 * (1 - eased)) + 'deg)';
+        line.style.opacity = Math.min(1, lp * 2.5);
+      } else {
+        var chars = line._chars;
+        if (!chars || !chars.length) continue;
+        for (var c = 0; c < chars.length; c++) {
+          var cStart2 = lineStart + (c / chars.length) * 0.15;
+          var cEnd2 = cStart2 + 0.5;
+          var cp3 = Math.max(0, Math.min(1, (sp - cStart2) / (cEnd2 - cStart2)));
+          var e3 = 1 - Math.pow(1 - cp3, 3);
+          chars[c].style.transform = 'translateX(' + (80 * (1 - e3)) + 'px) skewX(' + (-14 * (1 - e3)) + 'deg) scaleY(' + (0.95 + 0.05 * e3) + ')';
+          chars[c].style.opacity = Math.min(1, cp3 * 2.5);
+        }
+      }
+    }
+
+    for (var sti = 0; sti < scrubStickers.length; sti++) {
+      var sticker = scrubStickers[sti];
+      var stDelay = 0.35 + sti * 0.15;
+      var stP = Math.max(0, Math.min(1, (sp - stDelay) / 0.4));
+      var stE = 1 - Math.pow(1 - stP, 3);
+      sticker.style.transform = 'perspective(1000px) rotateY(' + (-40 * (1 - stE)) + 'deg) scale(' + (1.35 - 0.35 * stE) + ')';
+      sticker.style.opacity = stE;
+    }
+  }
+
+  /* ---------- Init scrub text splitting ---------- */
   function initScrubText() {
     var lines = document.querySelectorAll('[data-scrub-line]');
     scrubLines = [];
-    lines.forEach(function(line) {
-      // Don't split gradient lines (animate as unit)
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i];
       if (line.classList.contains('scrub-line--gradient')) {
         line._chars = null;
         scrubLines.push(line);
-        return;
+        continue;
       }
       var text = line.textContent;
       var html = '';
-      for (var i = 0; i < text.length; i++) {
-        if (text[i] === ' ') {
-          html += '<span class="scrub-char">\u00A0</span>';
-        } else {
-          html += '<span class="scrub-char">' + text[i] + '</span>';
-        }
+      for (var j = 0; j < text.length; j++) {
+        html += text[j] === ' '
+          ? '<span class="scrub-char">\u00A0</span>'
+          : '<span class="scrub-char">' + text[j] + '</span>';
       }
       line.innerHTML = html;
       line._chars = line.querySelectorAll('.scrub-char');
       scrubLines.push(line);
-    });
-    scrubStickers = document.querySelectorAll('[data-scroll-sticker]');
+    }
+    scrubStickers = Array.from(document.querySelectorAll('[data-scroll-sticker]'));
+  }
+
+  /* ---------- Init Scroll Animations ---------- */
+  function initScrollAnimations() {
+    /* Scroll-cards with cached section offset */
+    scrollCards = [];
+    var cardEls = document.querySelectorAll('[data-scroll-card]');
+    for (var i = 0; i < cardEls.length; i++) {
+      var card = cardEls[i];
+      var sec = card.closest('[data-scroll-section]');
+      card._sectionTop = sec ? getOffsetTop(sec) : getOffsetTop(card);
+      card._idx = parseInt(card.dataset.cardIndex) || 0;
+      scrollCards.push(card);
+    }
+
+    /* Scroll-slides */
+    scrollSlides = [];
+    var slideEls = document.querySelectorAll('[data-scroll-slide]');
+    for (var s = 0; s < slideEls.length; s++) {
+      var slide = slideEls[s];
+      var sec2 = slide.closest('[data-scroll-section]');
+      slide._sectionTop = sec2 ? getOffsetTop(sec2) : getOffsetTop(slide);
+      slide._idx = parseInt(slide.dataset.slideIndex) || 0;
+      scrollSlides.push(slide);
+    }
+
+    /* Scroll fade-ups */
+    scrollFadeUps = [];
+    var fadeEls = document.querySelectorAll('.scroll-fade-up');
+    for (var f = 0; f < fadeEls.length; f++) {
+      fadeEls[f]._top = getOffsetTop(fadeEls[f]);
+      scrollFadeUps.push(fadeEls[f]);
+    }
+
+    /* Split-word titles */
+    splitWordSections = [];
+    var splitEls = document.querySelectorAll('[data-split-words]');
+    for (var sw = 0; sw < splitEls.length; sw++) {
+      var el = splitEls[sw];
+      var nodes = el.childNodes;
+      var html = '';
+      for (var n = 0; n < nodes.length; n++) {
+        var node = nodes[n];
+        if (node.nodeType === 3) {
+          var parts = node.textContent.split(/(\s+)/);
+          for (var p = 0; p < parts.length; p++) {
+            html += parts[p].trim() === ''
+              ? parts[p]
+              : '<span class="split-word">' + parts[p] + '</span>';
+          }
+        } else if (node.nodeType === 1) {
+          var inner = node.textContent.split(/(\s+)/);
+          var cls = node.className || '';
+          for (var q = 0; q < inner.length; q++) {
+            html += inner[q].trim() === ''
+              ? inner[q]
+              : '<span class="split-word ' + cls + '">' + inner[q] + '</span>';
+          }
+        }
+      }
+      el.innerHTML = html;
+      var wordEls = el.querySelectorAll('.split-word');
+      splitWordSections.push({
+        el: el,
+        words: Array.from(wordEls),
+        top: getOffsetTop(el)
+      });
+    }
   }
 
   /* ---------- Mouse-driven gradient hue ---------- */
-  let mouseX = 0.5, mouseY = 0.5;
-  let hueTarget = 250, hueCurrent = 250;
+  var mouseX = 0.5, hueTarget = 250, hueCurrent = 250;
 
-  document.addEventListener('mousemove', e => {
+  document.addEventListener('mousemove', function(e) {
     mouseX = e.clientX / ww;
-    mouseY = e.clientY / wh;
   });
 
   function updateGradientHue() {
-    hueTarget = 220 + mouseX * 60; // 220-280 range
+    hueTarget = 220 + mouseX * 60;
     hueCurrent = lerp(hueCurrent, hueTarget, 0.02);
-    document.querySelectorAll('.gradient-text').forEach(el => {
-      el.style.setProperty('--hue', hueCurrent);
-    });
+    var gEls = document.querySelectorAll('.gradient-text');
+    for (var g = 0; g < gEls.length; g++) {
+      gEls[g].style.setProperty('--hue', hueCurrent);
+    }
   }
 
   /* ---------- Custom Cursor ---------- */
-  const cursor = document.querySelector('.cursor');
-  const cursorDot = document.querySelector('.cursor__dot');
-  const cursorRing = document.querySelector('.cursor__ring');
-  const cursorLabel = document.querySelector('.cursor__label');
-  let cx = 0, cy = 0, cxTarget = 0, cyTarget = 0;
+  var cursor = document.querySelector('.cursor');
+  var cursorLabel = document.querySelector('.cursor__label');
+  var cx = 0, cy = 0, cxTarget = 0, cyTarget = 0;
 
   function initCursor() {
     if (!cursor || ww < 769) return;
 
-    document.addEventListener('mousemove', e => {
+    document.addEventListener('mousemove', function(e) {
       cxTarget = e.clientX;
       cyTarget = e.clientY;
     });
 
-    // Hover targets
-    const hoverables = document.querySelectorAll('a, button, .btn, .work__card, .diff__card, .feature, .package, .process__step');
-    hoverables.forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        document.body.classList.add('cursor-hover');
-        const txt = el.dataset.cursorText;
-        if (txt && cursorLabel) {
-          cursorLabel.textContent = txt;
-          document.body.classList.add('cursor-text');
-        }
-      });
-      el.addEventListener('mouseleave', () => {
-        document.body.classList.remove('cursor-hover', 'cursor-text');
-        if (cursorLabel) cursorLabel.textContent = '';
-      });
-    });
+    var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .diff__card, .feature, .package-card, .process__step');
+    for (var h = 0; h < hoverables.length; h++) {
+      (function(el) {
+        el.addEventListener('mouseenter', function() {
+          document.body.classList.add('cursor-hover');
+          var txt = el.dataset.cursorText;
+          if (txt && cursorLabel) {
+            cursorLabel.textContent = txt;
+            document.body.classList.add('cursor-text');
+          }
+        });
+        el.addEventListener('mouseleave', function() {
+          document.body.classList.remove('cursor-hover', 'cursor-text');
+          if (cursorLabel) cursorLabel.textContent = '';
+        });
+      })(hoverables[h]);
+    }
 
     function animateCursor() {
       cx = lerp(cx, cxTarget, 0.15);
       cy = lerp(cy, cyTarget, 0.15);
-      if (cursor) cursor.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
+      cursor.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
       requestAnimationFrame(animateCursor);
     }
     animateCursor();
   }
 
   /* ---------- Starfield ---------- */
-  let stars = [];
-  const STAR_COUNT = 350;
+  var stars = [];
+  var STAR_COUNT = 350;
 
   function initStarfield() {
     if (!starCanvas || !ctx) return;
     resizeCanvas();
-    for (let i = 0; i < STAR_COUNT; i++) {
+    for (var i = 0; i < STAR_COUNT; i++) {
       stars.push({
-        x: Math.random() * ww,
-        y: Math.random() * wh,
-        r: Math.random() * 1.2 + 0.3,
-        a: Math.random() * 0.5 + 0.1,
-        s: Math.random() * 0.5 + 0.1,
-        d: Math.random() * Math.PI * 2,
+        x: Math.random() * ww, y: Math.random() * wh,
+        r: Math.random() * 1.2 + 0.3, a: Math.random() * 0.5 + 0.1,
+        s: Math.random() * 0.5 + 0.1, d: Math.random() * Math.PI * 2
       });
     }
     animateStars();
@@ -255,114 +433,106 @@
   function animateStars() {
     if (!ctx) return;
     ctx.clearRect(0, 0, ww, wh);
-    const time = Date.now() * 0.001;
-    stars.forEach(s => {
-      const twinkle = 0.5 + 0.5 * Math.sin(time * s.s + s.d);
+    var time = Date.now() * 0.001;
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var tw = 0.5 + 0.5 * Math.sin(time * s.s + s.d);
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(200,200,255,' + (s.a * twinkle) + ')';
+      ctx.fillStyle = 'rgba(200,200,255,' + (s.a * tw) + ')';
       ctx.fill();
-    });
+    }
     requestAnimationFrame(animateStars);
   }
 
-  /* ---------- Reveals ---------- */
+  /* ---------- Reveals (.reveal class, hero lines) ---------- */
   function initReveals() {
-    const reveals = document.querySelectorAll('.reveal');
-    const lines = document.querySelectorAll('[data-lines]');
+    var reveals = document.querySelectorAll('.reveal');
+    var lines = document.querySelectorAll('[data-lines]');
 
-    const revealObs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          const delay = parseInt(e.target.dataset.delay) || 0;
-          setTimeout(() => e.target.classList.add('visible'), delay);
-          revealObs.unobserve(e.target);
+    var revealObs = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          var d = parseInt(entries[i].target.dataset.delay) || 0;
+          (function(t) { setTimeout(function() { t.classList.add('visible'); }, d); })(entries[i].target);
+          revealObs.unobserve(entries[i].target);
         }
-      });
+      }
     }, { threshold: 0.15 });
+    for (var r = 0; r < reveals.length; r++) revealObs.observe(reveals[r]);
 
-    reveals.forEach(el => revealObs.observe(el));
-
-    const lineObs = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('lines-visible');
-          lineObs.unobserve(e.target);
+    var lineObs = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          entries[i].target.classList.add('lines-visible');
+          lineObs.unobserve(entries[i].target);
         }
-      });
+      }
     }, { threshold: 0.15 });
+    for (var l = 0; l < lines.length; l++) lineObs.observe(lines[l]);
 
-    lines.forEach(el => lineObs.observe(el));
-
-    // Hero activation
-    if (hero) {
-      setTimeout(() => hero.classList.add('is-active'), 800);
-    }
+    if (hero) setTimeout(function() { hero.classList.add('is-active'); }, 800);
   }
 
   /* ---------- Nav ---------- */
   function initNav() {
     if (!nav) return;
-
-    // Scroll state
-    const scrollCheck = () => {
+    window.addEventListener('scroll', function() {
       if (target > 80) nav.classList.add('scrolled');
       else nav.classList.remove('scrolled');
-    };
-    window.addEventListener('scroll', scrollCheck, { passive: true });
+    }, { passive: true });
 
-    // Mobile toggle
-    const toggle = nav.querySelector('.nav__toggle');
-    const links = nav.querySelector('.nav__links');
+    var toggle = nav.querySelector('.nav__toggle');
+    var links = nav.querySelector('.nav__links');
     if (toggle && links) {
-      toggle.addEventListener('click', () => {
+      toggle.addEventListener('click', function() {
         toggle.classList.toggle('active');
         links.classList.toggle('open');
       });
-      links.querySelectorAll('a').forEach(a => {
-        a.addEventListener('click', () => {
+      var navAs = links.querySelectorAll('a');
+      for (var i = 0; i < navAs.length; i++) {
+        navAs[i].addEventListener('click', function() {
           toggle.classList.remove('active');
           links.classList.remove('open');
         });
-      });
+      }
     }
   }
 
   /* ---------- Smooth Anchors ---------- */
   function initAnchors() {
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', e => {
+    var anchors = document.querySelectorAll('a[href^="#"]');
+    for (var i = 0; i < anchors.length; i++) {
+      anchors[i].addEventListener('click', function(e) {
         e.preventDefault();
-        const id = a.getAttribute('href');
+        var id = this.getAttribute('href');
         if (id === '#') return;
-        const el = document.querySelector(id);
+        var el = document.querySelector(id);
         if (!el) return;
-        const top = el.offsetTop;
-        window.scrollTo({ top, behavior: 'auto' });
+        var top = el.offsetTop;
+        window.scrollTo({ top: top, behavior: 'auto' });
         target = top;
       });
-    });
+    }
   }
 
   /* ---------- Text Scramble ---------- */
-  const CHARS = '{}/<>01!@#$%^&*()_+~`|\\:;"\',.?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var CHARS = '{}/<>01!@#$%^&*()_+~`|\\:;"\',.?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
   function scramble(el) {
-    const original = el.dataset.text || el.textContent;
+    var original = el.dataset.text || el.textContent;
     if (!el.dataset.text) el.dataset.text = original;
-    const len = original.length;
-    let frame = 0;
-    const totalFrames = 12;
+    var len = original.length;
+    var frame = 0;
+    var totalFrames = 30;
 
     function step() {
-      let out = '';
-      for (let i = 0; i < len; i++) {
+      var out = '';
+      for (var i = 0; i < len; i++) {
         if (original[i] === ' ') { out += ' '; continue; }
-        if (frame > (i / len) * totalFrames) {
-          out += original[i];
-        } else {
-          out += CHARS[Math.floor(Math.random() * CHARS.length)];
-        }
+        out += frame > (i / len) * totalFrames
+          ? original[i]
+          : CHARS[Math.floor(Math.random() * CHARS.length)];
       }
       el.textContent = out;
       frame++;
@@ -371,30 +541,32 @@
     }
     el.classList.add('scrambling');
     step();
-    setTimeout(() => el.classList.remove('scrambling'), totalFrames * 30);
+    setTimeout(function() { el.classList.remove('scrambling'); }, totalFrames * 30);
   }
 
   function initScramble() {
-    const targets = document.querySelectorAll(
+    var targets = document.querySelectorAll(
       '.nav__links a:not(.nav__cta), .footer__nav a, .tag, .work__cat, .diff__num, .process__num, .package__tier, .footer__social a'
     );
-    targets.forEach(t => {
-      t.addEventListener('mouseenter', () => scramble(t));
-    });
+    for (var i = 0; i < targets.length; i++) {
+      (function(t) {
+        t.addEventListener('mouseenter', function() { scramble(t); });
+      })(targets[i]);
+    }
   }
 
   /* ---------- Contact Form ---------- */
   function initForm() {
-    const form = document.querySelector('.contact__form');
+    var form = document.querySelector('.contact__form');
     if (!form) return;
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const btn = form.querySelector('.btn');
+      var btn = form.querySelector('.btn');
       if (btn) {
         btn.textContent = 'Message Sent';
         btn.style.background = '#00b894';
       }
-      setTimeout(() => {
+      setTimeout(function() {
         form.reset();
         if (btn) {
           btn.innerHTML = 'Send Message <span class="btn__arrow">&rarr;</span>';
@@ -404,11 +576,111 @@
     });
   }
 
+  /* ---------- Card Deck (Packages) ---------- */
+  var deckCards = [];
+  var deckActiveIndex = 1; // Start on Growth (middle card)
+  var deckDots = [];
+  var deckDragging = false;
+  var deckStartX = 0;
+  var deckDelta = 0;
+
+  function setDeckPositions() {
+    var total = deckCards.length;
+    for (var i = 0; i < total; i++) {
+      var offset = i - deckActiveIndex;
+      var pos;
+      if (offset === 0) pos = 'center';
+      else if (offset === -1) pos = 'left';
+      else if (offset === 1) pos = 'right';
+      else if (offset < -1) pos = 'far-left';
+      else pos = 'far-right';
+      deckCards[i].setAttribute('data-position', pos);
+    }
+    for (var d = 0; d < deckDots.length; d++) {
+      deckDots[d].classList.toggle('active', d === deckActiveIndex);
+    }
+  }
+
+  function deckNext() {
+    if (deckActiveIndex < deckCards.length - 1) {
+      deckActiveIndex++;
+      setDeckPositions();
+    }
+  }
+
+  function deckPrev() {
+    if (deckActiveIndex > 0) {
+      deckActiveIndex--;
+      setDeckPositions();
+    }
+  }
+
+  function deckGoTo(idx) {
+    deckActiveIndex = Math.max(0, Math.min(deckCards.length - 1, idx));
+    setDeckPositions();
+  }
+
+  function initCardDeck() {
+    var deck = document.getElementById('packagesDeck');
+    if (!deck) return;
+
+    deckCards = Array.from(deck.querySelectorAll('.package-card'));
+    deckDots = Array.from(deck.querySelectorAll('.deck-dot'));
+
+    var prevBtn = deck.querySelector('.deck-nav__prev');
+    var nextBtn = deck.querySelector('.deck-nav__next');
+
+    if (prevBtn) prevBtn.addEventListener('click', deckPrev);
+    if (nextBtn) nextBtn.addEventListener('click', deckNext);
+
+    for (var d = 0; d < deckDots.length; d++) {
+      (function(idx) {
+        deckDots[idx].addEventListener('click', function() { deckGoTo(idx); });
+      })(d);
+    }
+
+    // Click left/right cards to navigate
+    for (var c = 0; c < deckCards.length; c++) {
+      (function(idx) {
+        deckCards[idx].addEventListener('click', function() {
+          if (idx !== deckActiveIndex) deckGoTo(idx);
+        });
+      })(c);
+    }
+
+    // Touch / pointer drag to swipe
+    var cardsEl = deck.querySelector('.packages-deck__cards');
+    if (cardsEl) {
+      cardsEl.addEventListener('pointerdown', function(e) {
+        if (e.target.closest('a, button')) return;
+        deckDragging = true;
+        deckStartX = e.clientX;
+        deckDelta = 0;
+        cardsEl.setPointerCapture(e.pointerId);
+      });
+      cardsEl.addEventListener('pointermove', function(e) {
+        if (!deckDragging) return;
+        deckDelta = e.clientX - deckStartX;
+      });
+      cardsEl.addEventListener('pointerup', function() {
+        if (!deckDragging) return;
+        deckDragging = false;
+        if (deckDelta < -50) deckNext();
+        else if (deckDelta > 50) deckPrev();
+      });
+      cardsEl.addEventListener('pointercancel', function() { deckDragging = false; });
+    }
+
+    setDeckPositions();
+  }
+
   /* ---------- Init ---------- */
   function initAfterLoad() {
-    parallaxEls = document.querySelectorAll('[data-speed]');
+    parallaxEls = Array.from(document.querySelectorAll('[data-speed]'));
     setBodyHeight();
     initScrubText();
+    initScrollAnimations();
+    initCardDeck();
     smoothScroll();
     initStarfield();
     initCursor();
@@ -420,14 +692,27 @@
   }
 
   /* ---------- Resize ---------- */
-  let resizeTimer;
-  window.addEventListener('resize', () => {
+  var resizeTimer;
+  window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
+    resizeTimer = setTimeout(function() {
       wh = window.innerHeight;
       ww = window.innerWidth;
       setBodyHeight();
       resizeCanvas();
+      // Recache offsets
+      for (var i = 0; i < scrollFadeUps.length; i++) scrollFadeUps[i]._top = getOffsetTop(scrollFadeUps[i]);
+      for (var j = 0; j < scrollCards.length; j++) {
+        var sec = scrollCards[j].closest('[data-scroll-section]');
+        scrollCards[j]._sectionTop = sec ? getOffsetTop(sec) : getOffsetTop(scrollCards[j]);
+      }
+      for (var k = 0; k < scrollSlides.length; k++) {
+        var sec2 = scrollSlides[k].closest('[data-scroll-section]');
+        scrollSlides[k]._sectionTop = sec2 ? getOffsetTop(sec2) : getOffsetTop(scrollSlides[k]);
+      }
+      for (var m = 0; m < splitWordSections.length; m++) {
+        splitWordSections[m].top = getOffsetTop(splitWordSections[m].el);
+      }
     }, 150);
   });
 })();

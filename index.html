@@ -55,6 +55,71 @@
   <div id="smooth-wrapper">
     <div id="smooth-content">
 
+      <!-- ROCKET INTRO -->
+      <section class="rocket-intro" id="rocketIntro">
+        <div class="rocket-intro__inner">
+          <svg class="rocket-intro__svg" id="rocketSvg" viewBox="0 0 200 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Exhaust glow -->
+            <ellipse class="rocket__glow" cx="100" cy="380" rx="30" ry="12" fill="url(#exhaustGlow)" opacity="0.6"/>
+            <!-- Exhaust flames -->
+            <path class="rocket__flame rocket__flame--outer" d="M82 310 Q100 400 118 310" fill="url(#flameOuter)" opacity="0.7"/>
+            <path class="rocket__flame rocket__flame--inner" d="M88 310 Q100 370 112 310" fill="url(#flameInner)" opacity="0.9"/>
+            <!-- Body -->
+            <path d="M70 300 L70 140 Q70 40 100 20 Q130 40 130 140 L130 300 Z" fill="url(#bodyGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <!-- Nose highlight -->
+            <path d="M88 60 Q100 28 105 60" fill="rgba(255,255,255,0.06)"/>
+            <!-- Window -->
+            <circle cx="100" cy="140" r="18" fill="#0a0a20" stroke="rgba(162,155,254,0.4)" stroke-width="1.5"/>
+            <circle cx="100" cy="140" r="12" fill="url(#windowGrad)"/>
+            <ellipse cx="95" cy="135" rx="4" ry="3" fill="rgba(255,255,255,0.15)"/>
+            <!-- Side panels -->
+            <rect x="74" y="200" width="8" height="60" rx="3" fill="rgba(108,92,231,0.3)"/>
+            <rect x="118" y="200" width="8" height="60" rx="3" fill="rgba(108,92,231,0.3)"/>
+            <!-- Fins -->
+            <path d="M70 280 L45 320 L45 310 Q50 285 70 270 Z" fill="url(#finGrad)" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+            <path d="M130 280 L155 320 L155 310 Q150 285 130 270 Z" fill="url(#finGrad)" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+            <!-- Bottom nozzle -->
+            <path d="M85 300 L80 315 L120 315 L115 300" fill="#1a1a3e" stroke="rgba(108,92,231,0.3)" stroke-width="0.5"/>
+            <!-- Accent stripe -->
+            <rect x="90" y="180" width="20" height="4" rx="2" fill="var(--accent)" opacity="0.6"/>
+            <!-- Defs -->
+            <defs>
+              <linearGradient id="bodyGrad" x1="100" y1="20" x2="100" y2="300" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#2a2a5e"/>
+                <stop offset="50%" stop-color="#16163a"/>
+                <stop offset="100%" stop-color="#0e0e28"/>
+              </linearGradient>
+              <linearGradient id="finGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1e1e4a"/>
+                <stop offset="100%" stop-color="#0a0a22"/>
+              </linearGradient>
+              <radialGradient id="windowGrad" cx="50%" cy="40%" r="50%">
+                <stop offset="0%" stop-color="#6c5ce7" stop-opacity="0.5"/>
+                <stop offset="100%" stop-color="#0a0a20" stop-opacity="1"/>
+              </radialGradient>
+              <linearGradient id="flameOuter" x1="100" y1="310" x2="100" y2="400" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#6c5ce7"/>
+                <stop offset="50%" stop-color="#00cec9"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </linearGradient>
+              <linearGradient id="flameInner" x1="100" y1="310" x2="100" y2="370" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#fff"/>
+                <stop offset="40%" stop-color="#a29bfe"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </linearGradient>
+              <radialGradient id="exhaustGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#6c5ce7" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="transparent"/>
+              </radialGradient>
+            </defs>
+          </svg>
+          <p class="rocket-intro__hint">
+            <span>Scroll to Launch</span>
+            <span class="rocket-intro__arrow">&#8595;</span>
+          </p>
+        </div>
+      </section>
+
       <!-- HERO -->
       <section class="section hero" id="hero">
         <div class="hero__bg">

@@ -116,6 +116,77 @@ body.cursor-text .cursor__ring {
 }
 
 /* ============================================
+   ROCKET INTRO
+   ============================================ */
+.rocket-intro {
+  height: 300vh;
+  position: relative;
+  z-index: 2;
+}
+
+.rocket-intro__inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.rocket-intro__svg {
+  width: 120px;
+  height: auto;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 40px rgba(108,92,231,0.2));
+}
+
+.rocket__flame {
+  transform-origin: center top;
+  animation: flameFlicker 0.15s infinite alternate;
+}
+.rocket__flame--outer { animation-delay: 0.05s; }
+.rocket__glow {
+  animation: glowPulse 1s infinite alternate;
+}
+
+@keyframes flameFlicker {
+  0%   { transform: scaleX(1) scaleY(1); }
+  100% { transform: scaleX(0.92) scaleY(1.06); }
+}
+@keyframes glowPulse {
+  0%   { opacity: 0.3; }
+  100% { opacity: 0.7; }
+}
+
+.rocket-intro__hint {
+  position: absolute;
+  bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: opacity 0.5s;
+}
+
+.rocket-intro__arrow {
+  font-size: 1rem;
+  animation: hintBounce 1.5s infinite;
+}
+
+@keyframes hintBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+/* ============================================
    CANVAS
    ============================================ */
 #starfield {

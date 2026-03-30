@@ -30,6 +30,8 @@
     content.style.transform = 'translate3d(0,' + (-current) + 'px,0)';
     // parallax
     updateParallax();
+    // rocket zoom
+    updateRocket();
     raf = requestAnimationFrame(smoothScroll);
   }
 
@@ -101,6 +103,57 @@
     }, { rootMargin: '-20px 0px', threshold: 0.2 });
 
     containers.forEach(function (el) { observer.observe(el); });
+  }
+
+  /* ----- ROCKET INTRO ----- */
+  var rocketSvg, rocketHint, rocketSection, rocketZoneEnd;
+
+  function initRocket() {
+    rocketSvg     = document.getElementById('rocketSvg');
+    rocketHint    = document.querySelector('.rocket-intro__hint');
+    rocketSection = document.getElementById('rocketIntro');
+    if (!rocketSection) return;
+    rocketZoneEnd = rocketSection.offsetHeight - wh;
+  }
+
+  function updateRocket() {
+    if (!rocketSvg || !rocketSection) return;
+    // progress 0→1 through the rocket section (300vh minus one screen)
+    var progress = current / rocketZoneEnd;
+    if (progress < 0) progress = 0;
+    if (progress > 1) progress = 1;
+
+    // Scale: 1 → 50  (exponential for dramatic zoom)
+    var scale = 1 + Math.pow(progress, 2.5) * 49;
+    // Opacity: visible until very end, then fade out
+    var opacity = progress < 0.7 ? 1 : 1 - ((progress - 0.7) / 0.3);
+    // Flames grow
+    var flameScale = 1 + progress * 2;
+
+    rocketSvg.style.transform = 'scale(' + scale + ')';
+    rocketSvg.style.opacity = opacity;
+
+    // Flame intensity via filter glow
+    var glowSize = 40 + progress * 120;
+    rocketSvg.style.filter = 'drop-shadow(0 0 ' + glowSize + 'px rgba(108,92,231,' + (0.2 + progress * 0.6) + '))';
+
+    // Scale flames
+    var flames = rocketSection.querySelectorAll('.rocket__flame');
+    flames.forEach(function(f) {
+      f.style.transform = 'scaleY(' + flameScale + ')';
+    });
+
+    // Hide hint as soon as scrolling starts
+    if (rocketHint) {
+      rocketHint.style.opacity = progress > 0.05 ? '0' : '1';
+    }
+
+    // Hide nav until rocket section is passed
+    var nav = document.getElementById('nav');
+    if (nav) {
+      nav.style.opacity = progress < 0.95 ? '0' : '1';
+      nav.style.pointerEvents = progress < 0.95 ? 'none' : '';
+    }
   }
 
   /* ----- HERO ACTIVATE ----- */
@@ -311,6 +364,7 @@
     cacheParallax();
     smoothScroll();
 
+    initRocket();
     initReveals();
     initLineReveals();
     initHero();
@@ -327,6 +381,7 @@
       ww = window.innerWidth;
       setBodyHeight();
       cacheParallax();
+      if (rocketSection) rocketZoneEnd = rocketSection.offsetHeight - wh;
     });
   }
 

@@ -46,10 +46,13 @@
 
   function updateGradientText() {
     if (!gradientEls.length) return;
-    var maxScroll = content.scrollHeight - wh;
+    var totalHeight = parseFloat(body.style.height) || content.scrollHeight;
+    var maxScroll = totalHeight - wh;
     if (maxScroll <= 0) return;
     var progress = current / maxScroll; // 0 → 1
-    var pos = progress * 100; // 0% → 100%
+    if (progress < 0) progress = 0;
+    if (progress > 1) progress = 1;
+    var pos = progress * 300; // sweep across 0%→300% of background-size
     for (var i = 0; i < gradientEls.length; i++) {
       gradientEls[i].style.backgroundPosition = pos + '% 50%';
     }

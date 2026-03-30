@@ -45,12 +45,6 @@
   var ww = window.innerWidth;
   var contentH = 0;
 
-  /* ---------- Horizontal Scroll State ---------- */
-  var workSection = document.getElementById('work');
-  var workHorizontal = document.getElementById('workHorizontal');
-  var workTrack = document.getElementById('workTrack');
-  var workScrollRange = 0;
-
   /* ---------- Animation Elements ---------- */
   var scrollCards = [];
   var scrollSlides = [];
@@ -76,11 +70,6 @@
 
   /* ---------- Smooth Scroll Engine ---------- */
   function setBodyHeight() {
-    if (workTrack && workHorizontal) {
-      var trackWidth = workTrack.scrollWidth;
-      workScrollRange = Math.max(0, trackWidth - ww + 80);
-      workHorizontal.style.height = workScrollRange + 'px';
-    }
     contentH = content.scrollHeight;
     document.body.style.height = contentH + 'px';
   }
@@ -180,27 +169,7 @@
       }
     }
 
-    /* 5) Horizontal scroll work section */
-    if (workSection && workTrack && workScrollRange > 0) {
-      var wsTop = getOffsetTop(workHorizontal);
-      var hStart = wsTop - wh * 0.5;
-      var hEnd = hStart + workScrollRange;
-      var hp = Math.max(0, Math.min(1, (current - hStart) / (hEnd - hStart)));
-      workTrack.style.transform = 'translate3d(' + -(hp * workScrollRange) + 'px, 0, 0)';
-
-      var hCards = workTrack.querySelectorAll('.work__card-h');
-      for (var hi = 0; hi < hCards.length; hi++) {
-        var hcp = Math.max(0, Math.min(1, (hp - hi * 0.2) / 0.35));
-        var hEased = 1 - Math.pow(1 - hcp, 3);
-        hCards[hi].style.transform = 'translateY(' + (50 * (1 - hEased)) + 'px)';
-        hCards[hi].style.opacity = Math.min(1, hcp * 2.5);
-
-        var hMask = hCards[hi].querySelector('.work__reveal-mask');
-        if (hMask) hMask.style.transform = 'scaleX(' + (1 - hEased) + ')';
-      }
-    }
-
-    /* 6) Big CTA scale entrance */
+    /* 5) Big CTA scale entrance */
     var ctaEl = document.querySelector('[data-cta-scale]');
     if (ctaEl) {
       var ctaTop = getOffsetTop(ctaEl);
@@ -695,6 +664,20 @@
     setDeckPositions();
   }
 
+  /* ---------- Portfolio Glow Tracking ---------- */
+  function initPortfolioGlow() {
+    var rows = document.querySelectorAll('[data-portfolio-row]');
+    for (var i = 0; i < rows.length; i++) {
+      rows[i].addEventListener('mousemove', function(e) {
+        var rect = this.getBoundingClientRect();
+        var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+        var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+        this.style.setProperty('--glow-x', x + '%');
+        this.style.setProperty('--glow-y', y + '%');
+      });
+    }
+  }
+
   /* ---------- Init ---------- */
   function initAfterLoad() {
     parallaxEls = Array.from(document.querySelectorAll('[data-speed]'));
@@ -702,6 +685,7 @@
     initScrubText();
     initScrollAnimations();
     initCardDeck();
+    initPortfolioGlow();
     smoothScroll();
     initStarfield();
     initCursor();

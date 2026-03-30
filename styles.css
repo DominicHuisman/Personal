@@ -303,10 +303,10 @@ body.cursor-text .cursor__ring {
 .btn--lg { padding: 20px 48px; font-size: 1rem; }
 
 /* ============================================
-   INTRO SEQUENCE
+   INTRO — Brand reveal
    ============================================ */
 .intro {
-  height: 500vh; /* Scroll space for animation */
+  height: 250vh;
   position: relative;
   z-index: 2;
 }
@@ -321,67 +321,39 @@ body.cursor-text .cursor__ring {
   overflow: hidden;
 }
 
-.intro__frame {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  opacity: 0;
-  transition: none; /* Controlled by JS */
-  padding: 24px;
-}
-
-.intro__label {
-  font-family: var(--font-display);
-  font-size: clamp(0.8rem, 1.2vw, 1rem);
-  font-weight: 500;
-  letter-spacing: 8px;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.intro__text {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 5vw, 4rem);
-  font-weight: 300;
-  line-height: 1.2;
-  color: #fff;
-}
-
-.intro__text em {
-  font-style: italic;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.intro__text--large {
-  font-size: clamp(3rem, 8vw, 7rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -2px;
-}
-
-.intro__reveal {
+.intro__brand {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
+  opacity: 0;
+  transform: scale(0.92);
+  transition: none; /* controlled by JS */
 }
 
-.intro__line {
-  width: 1px;
+.intro__mark {
+  width: 80px;
   height: 80px;
-  background: linear-gradient(to bottom, var(--accent-light), transparent);
-  animation: introLinePulse 2s infinite;
+  margin-bottom: 8px;
 }
 
-@keyframes introLinePulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+.intro__wordmark {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 700;
+  letter-spacing: 12px;
+  color: #fff;
+}
+.intro__wordmark span {
+  color: var(--accent-light);
+}
+
+.intro__tagline {
+  font-family: var(--font-display);
+  font-size: clamp(0.7rem, 1vw, 0.9rem);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
 }
 
 /* ============================================
@@ -1261,6 +1233,14 @@ body.cursor-text .cursor__ring {
 }
 
 .footer__nav a:hover { color: #fff; }
+
+.footer__tagline {
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: -4px;
+}
 
 .footer__social {
   display: flex;

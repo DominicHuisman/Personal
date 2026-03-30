@@ -179,13 +179,12 @@
 
 
   /* ----------------------------------------
-     INTRO SEQUENCE — Roswell-style
+     INTRO — Brand reveal
      ---------------------------------------- */
   function initIntroSequence() {
     const intro = document.getElementById('intro');
-    const frames = intro.querySelectorAll('.intro__frame');
+    const brand = intro.querySelector('.intro__brand');
     const nav = document.getElementById('nav');
-    const totalFrames = frames.length;
 
     function updateIntro() {
       const rect = intro.getBoundingClientRect();
@@ -193,45 +192,27 @@
       const scrolled = -rect.top;
       const progress = Math.max(0, Math.min(1, scrolled / scrollHeight));
 
-      // Divide progress into segments for each frame
-      const segmentSize = 1 / totalFrames;
+      let opacity = 0;
+      let scale = 0.92;
 
-      frames.forEach((frame, i) => {
-        const segStart = i * segmentSize;
-        const segEnd = segStart + segmentSize;
-        const segMid = segStart + segmentSize * 0.5;
+      if (progress < 0.15) {
+        // Fade in
+        const t = progress / 0.15;
+        opacity = t;
+        scale = 0.92 + t * 0.08;
+      } else if (progress < 0.7) {
+        // Hold
+        opacity = 1;
+        scale = 1;
+      } else {
+        // Fade out
+        const t = (progress - 0.7) / 0.3;
+        opacity = 1 - t;
+        scale = 1 + t * 0.04;
+      }
 
-        let opacity = 0;
-        let scale = 0.95;
-        let y = 20;
-
-        if (progress >= segStart && progress <= segEnd) {
-          // Fade in during first half, fade out during second half
-          const segProgress = (progress - segStart) / segmentSize;
-
-          if (segProgress < 0.15) {
-            // Fade in
-            const t = segProgress / 0.15;
-            opacity = t;
-            scale = 0.96 + t * 0.04;
-            y = 20 * (1 - t);
-          } else if (segProgress < 0.7) {
-            // Hold
-            opacity = 1;
-            scale = 1;
-            y = 0;
-          } else {
-            // Fade out
-            const t = (segProgress - 0.7) / 0.3;
-            opacity = 1 - t;
-            scale = 1 + t * 0.03;
-            y = -15 * t;
-          }
-        }
-
-        frame.style.opacity = opacity;
-        frame.style.transform = `translate3d(0, ${y}px, 0) scale(${scale})`;
-      });
+      brand.style.opacity = opacity;
+      brand.style.transform = `scale(${scale})`;
 
       // Show nav after intro
       if (progress > 0.95) {

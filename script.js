@@ -126,7 +126,7 @@
       }
     }
 
-    /* 2) 3D card reveals */
+    /* 2) Card glitch reveals */
     for (var ci = 0; ci < scrollCards.length; ci++) {
       var card = scrollCards[ci];
       var cStart = card._sectionTop - wh * 0.65;
@@ -136,14 +136,18 @@
       var cDelayed = Math.max(0, Math.min(1, (cp - cDelay) / (1 - cDelay)));
       var cEased = 1 - Math.pow(1 - cDelayed, 3);
 
-      card.style.transform = 'perspective(1200px) rotateY(' + (-8 * (1 - cEased)) +
-        'deg) rotateX(' + (4 * (1 - cEased)) +
-        'deg) translateY(' + (60 * (1 - cEased)) +
-        'px) scale(' + (0.92 + 0.08 * cEased) + ')';
+      var clipRight = (1 - cEased) * 100;
+      card.style.clipPath = 'inset(0 ' + clipRight + '% 0 0)';
+      card.style.filter = cEased < 1 ? 'blur(' + (6 * (1 - cEased)) + 'px) brightness(' + (1 + 0.5 * (1 - cEased)) + ')' : 'none';
       card.style.opacity = Math.min(1, cDelayed * 2.5);
+      if (cEased > 0.1 && cEased < 0.9) {
+        card.style.transform = 'skewX(' + ((Math.random() - 0.5) * 3 * (1 - cEased)) + 'deg)';
+      } else {
+        card.style.transform = 'none';
+      }
     }
 
-    /* 3) Process step slides */
+    /* 3) Process step glitch-in */
     for (var si = 0; si < scrollSlides.length; si++) {
       var slide = scrollSlides[si];
       var sStart = slide._sectionTop - wh * 0.55;
@@ -153,14 +157,16 @@
       var sDelayed = Math.max(0, Math.min(1, (sp2 - sDelay2) / (1 - sDelay2)));
       var sEased = 1 - Math.pow(1 - sDelayed, 4);
 
-      slide.style.transform = 'translateX(' + (-100 * (1 - sEased)) + 'px)';
+      var sClipRight = (1 - sEased) * 100;
+      slide.style.clipPath = 'inset(0 ' + sClipRight + '% 0 0)';
+      slide.style.filter = sEased < 1 ? 'blur(' + (4 * (1 - sEased)) + 'px)' : 'none';
       slide.style.opacity = Math.min(1, sDelayed * 2);
 
       var sLine = slide.querySelector('.process__line');
       if (sLine) sLine.style.width = (sEased * 100) + '%';
     }
 
-    /* 4) Split-word reveals */
+    /* 4) Split-word glitch reveals */
     for (var wi2 = 0; wi2 < splitWordSections.length; wi2++) {
       var item = splitWordSections[wi2];
       var wStart = item.top - wh * 0.75;
@@ -171,7 +177,9 @@
         var wordDelay = (wj / item.words.length) * 0.5;
         var wwp = Math.max(0, Math.min(1, (wp2 - wordDelay) / (1 - wordDelay)));
         var wEased = 1 - Math.pow(1 - wwp, 3);
-        item.words[wj].style.transform = 'translateY(' + (40 * (1 - wEased)) + 'px) rotateX(' + (-15 * (1 - wEased)) + 'deg)';
+        var wClipRight = (1 - wEased) * 100;
+        item.words[wj].style.clipPath = 'inset(0 ' + wClipRight + '% 0 0)';
+        item.words[wj].style.filter = wEased < 1 ? 'blur(' + (3 * (1 - wEased)) + 'px)' : 'none';
         item.words[wj].style.opacity = Math.min(1, wwp * 2);
       }
     }

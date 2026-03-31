@@ -121,7 +121,7 @@
     /* 1) Scroll fade-ups — trigger decode on enter (early trigger) */
     for (var fi = 0; fi < scrollFadeUps.length; fi++) {
       var fu = scrollFadeUps[fi];
-      if (current + wh > fu._top - 40 && !fu.classList.contains('in-view')) {
+      if (current + wh * 0.88 > fu._top && !fu.classList.contains('in-view')) {
         fu.classList.add('in-view');
         decodeElement(fu, 0);
       }
@@ -131,11 +131,11 @@
     for (var ci = 0; ci < scrollCards.length; ci++) {
       var card = scrollCards[ci];
       var cardTop = getOffsetTop(card);
-      var cVisible = current + wh > cardTop - 40;
+      var cVisible = current + wh * 0.88 > cardTop;
       if (cVisible && !card._decoded) {
         card._decoded = true;
         card.style.opacity = '1';
-        decodeBlock(card, card._idx * 80);
+        decodeBlock(card, card._idx * 120);
       }
     }
 
@@ -143,11 +143,11 @@
     for (var si = 0; si < scrollSlides.length; si++) {
       var slide = scrollSlides[si];
       var slideTop = getOffsetTop(slide);
-      var sVisible = current + wh > slideTop - 40;
+      var sVisible = current + wh * 0.88 > slideTop;
       if (sVisible && !slide._decoded) {
         slide._decoded = true;
         slide.style.opacity = '1';
-        decodeBlock(slide, slide._idx * 60);
+        decodeBlock(slide, slide._idx * 100);
         var sLine = slide.querySelector('.process__line');
         if (sLine) {
           sLine.style.transition = 'width 1s var(--ease)';
@@ -159,12 +159,12 @@
     /* 4) Split-word decode reveals */
     for (var wi2 = 0; wi2 < splitWordSections.length; wi2++) {
       var item = splitWordSections[wi2];
-      if (current + wh > item.top - 40 && !item._decoded) {
+      if (current + wh * 0.88 > item.top && !item._decoded) {
         item._decoded = true;
         for (var wj = 0; wj < item.words.length; wj++) {
           item.words[wj].style.opacity = '1';
           item.words[wj].classList.add('in-view');
-          decodeElement(item.words[wj], wj * 50);
+          decodeElement(item.words[wj], wj * 80);
         }
       }
     }
@@ -181,13 +181,13 @@
         var scDesc = showcaseText.querySelector('.showcase__desc');
         var scStats = showcaseText.querySelector('.showcase__stats');
         if (scTag) decodeElement(scTag, 0);
-        if (scHead) decodeElement(scHead, 80);
-        if (scDesc) decodeElement(scDesc, 160);
-        if (scStats) decodeElement(scStats, 240);
+        if (scHead) decodeElement(scHead, 150);
+        if (scDesc) decodeElement(scDesc, 300);
+        if (scStats) decodeElement(scStats, 450);
       }
-      if (scP > 0.05 && showcaseMockup && !showcaseMockup.classList.contains('in-view')) {
+      if (scP > 0.1 && showcaseMockup && !showcaseMockup.classList.contains('in-view')) {
         showcaseMockup.classList.add('in-view');
-        decodeBlock(showcaseMockup, 50);
+        decodeBlock(showcaseMockup, 100);
       }
 
       // Parallax: bg moves slower, mockup drifts subtly
@@ -494,9 +494,9 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       totalLen += visibleNodes[t].original.length;
     }
 
-    // Faster: resolve ~3 chars per frame at 20ms intervals, total ~350ms for avg text
-    var charsPerFrame = Math.max(2, Math.ceil(totalLen / 15));
-    var frameInterval = 20;
+    // Decode speed: ~700ms for average text
+    var charsPerFrame = Math.max(1, Math.ceil(totalLen / 30));
+    var frameInterval = 25;
 
     setTimeout(function() {
       // Initial scramble pass — all characters become random
@@ -545,13 +545,13 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
         }
       }, frameInterval);
 
-      // Safety: force-resolve after 600ms no matter what
+      // Safety: force-resolve after 1200ms no matter what
       setTimeout(function() {
         clearInterval(interval);
         for (var t3 = 0; t3 < visibleNodes.length; t3++) {
           visibleNodes[t3].node.textContent = visibleNodes[t3].original;
         }
-      }, 600);
+      }, 1200);
     }, delay || 0);
   }
 
@@ -579,8 +579,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       el.appendChild(overlay);
 
       // Animate the overlay clearing — randomize chars + fade
-      var steps = 8;
-      var stepDuration = 35;
+      var steps = 12;
+      var stepDuration = 45;
       var currentStep = 0;
 
       var scanInterval = setInterval(function() {
@@ -612,7 +612,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       var textEls = el.querySelectorAll('p, strong, span:not(.gradient-text), h3, h4, h5');
       for (var j = 0; j < textEls.length; j++) {
         if (!textEls[j]._decoding && textEls[j].childNodes.length > 0) {
-          decodeElement(textEls[j], j * 30);
+          decodeElement(textEls[j], j * 50);
         }
       }
     }, delay || 0);

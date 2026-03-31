@@ -786,16 +786,19 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
 
   /* ---------- Auto-Glitch on .tag elements ---------- */
   var tags = document.querySelectorAll('.tag');
-  function triggerRandomGlitch() {
-    var idx = Math.floor(Math.random() * tags.length);
-    var el = tags[idx];
-    if (!el.classList.contains('glitching')) {
-      el.classList.add('glitching');
-      setTimeout(function() { el.classList.remove('glitching'); }, 400);
-    }
-    setTimeout(triggerRandomGlitch, 2000 + Math.random() * 4000);
+  function scheduleGlitch(el) {
+    var delay = 3000 + Math.random() * 5000;
+    setTimeout(function() {
+      if (!el.classList.contains('glitching')) {
+        el.classList.add('glitching');
+        setTimeout(function() { el.classList.remove('glitching'); }, 400);
+      }
+      scheduleGlitch(el);
+    }, delay);
   }
-  if (tags.length) setTimeout(triggerRandomGlitch, 1500 + Math.random() * 3000);
+  for (var g = 0; g < tags.length; g++) {
+    scheduleGlitch(tags[g]);
+  }
     initReveals();
     initNav();
     initAnchors();

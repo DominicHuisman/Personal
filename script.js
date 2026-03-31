@@ -452,48 +452,6 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     requestAnimationFrame(animateTrail);
   }
 
-  /* ---------- Hero Mouse Parallax ---------- */
-  function initHeroParallax() {
-    if (!hero || ww < 769) return;
-    var heroOrbs = hero.querySelectorAll('.hero__orb');
-    var heroStars = hero.querySelector('.hero__stars');
-    var heroGrad = hero.querySelector('.hero__gradient');
-
-    document.addEventListener('mousemove', function(e) {
-      var mx = (e.clientX / ww - 0.5) * 2;
-      var my = (e.clientY / wh - 0.5) * 2;
-
-      if (heroStars) {
-        heroStars.style.transform = 'translate(' + (mx * 25) + 'px,' + (my * 20) + 'px)';
-      }
-      if (heroGrad) {
-        heroGrad.style.transform = 'translateX(-50%) translate(' + (mx * -20) + 'px,' + (my * -15) + 'px)';
-      }
-      for (var i = 0; i < heroOrbs.length; i++) {
-        var depth = (i + 1) * 15;
-        heroOrbs[i].style.transform = 'translate(' + (mx * depth) + 'px,' + (my * depth) + 'px)';
-      }
-    });
-  }
-
-  /* ---------- Magnetic Buttons ---------- */
-  function initMagneticButtons() {
-    if (ww < 769) return;
-    var btns = document.querySelectorAll('.btn');
-    for (var i = 0; i < btns.length; i++) {
-      (function(btn) {
-        btn.addEventListener('mousemove', function(e) {
-          var rect = btn.getBoundingClientRect();
-          var bx = e.clientX - rect.left - rect.width / 2;
-          var by = e.clientY - rect.top - rect.height / 2;
-          btn.style.transform = 'translate(' + (bx * 0.3) + 'px,' + (by * 0.3) + 'px)';
-        });
-        btn.addEventListener('mouseleave', function() {
-          btn.style.transform = '';
-        });
-      })(btns[i]);
-    }
-  }
 
   /* ---------- Text Scramble on Scroll Reveal ---------- */
   var scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
@@ -946,8 +904,6 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     initStarfield();
     initCursor();
     initCursorTrail();
-    initHeroParallax();
-    initMagneticButtons();
     initTextScramble();
     initTiltCards();
 

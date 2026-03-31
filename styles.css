@@ -109,6 +109,10 @@ body.cursor-text .cursor__ring {
   position: fixed; inset: 0;
   z-index: 0; pointer-events: none;
 }
+#cursorTrail {
+  position: fixed; inset: 0;
+  z-index: 9999; pointer-events: none;
+}
 
 /* ============================================
    PRELOADER
@@ -558,6 +562,18 @@ body.cursor-text .cursor__ring {
 }
 @keyframes scrollLine {
   0% { top: -100%; } 100% { top: 100%; }
+}
+
+/* ============================================
+   3D TILT CARDS
+   ============================================ */
+.tilt-card {
+  transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.tilt-card:hover {
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 30px rgba(108,92,231,0.08);
 }
 
 /* ============================================

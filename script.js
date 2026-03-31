@@ -118,35 +118,36 @@
 
     /* ====== SCROLL-DRIVEN SECTION ANIMATIONS ====== */
 
-    /* 1) Scroll fade-ups — trigger decode on enter */
+    /* 1) Scroll fade-ups — trigger decode on enter (early trigger) */
     for (var fi = 0; fi < scrollFadeUps.length; fi++) {
       var fu = scrollFadeUps[fi];
-      if (current + wh * 0.82 > fu._top && !fu.classList.contains('in-view')) {
+      if (current + wh > fu._top - 40 && !fu.classList.contains('in-view')) {
         fu.classList.add('in-view');
-        decodeElement(fu, fi * 60);
+        decodeElement(fu, 0);
       }
     }
 
     /* 2) Card decode reveals */
     for (var ci = 0; ci < scrollCards.length; ci++) {
       var card = scrollCards[ci];
-      var cStart = card._sectionTop - wh * 0.65;
-      var cVisible = current + wh * 0.65 > card._sectionTop;
+      var cardTop = getOffsetTop(card);
+      var cVisible = current + wh > cardTop - 40;
       if (cVisible && !card._decoded) {
         card._decoded = true;
         card.style.opacity = '1';
-        decodeBlock(card, card._idx * 120);
+        decodeBlock(card, card._idx * 80);
       }
     }
 
     /* 3) Process step decode */
     for (var si = 0; si < scrollSlides.length; si++) {
       var slide = scrollSlides[si];
-      var sVisible = current + wh * 0.55 > slide._sectionTop;
+      var slideTop = getOffsetTop(slide);
+      var sVisible = current + wh > slideTop - 40;
       if (sVisible && !slide._decoded) {
         slide._decoded = true;
         slide.style.opacity = '1';
-        decodeBlock(slide, slide._idx * 100);
+        decodeBlock(slide, slide._idx * 60);
         var sLine = slide.querySelector('.process__line');
         if (sLine) {
           sLine.style.transition = 'width 1s var(--ease)';
@@ -158,13 +159,12 @@
     /* 4) Split-word decode reveals */
     for (var wi2 = 0; wi2 < splitWordSections.length; wi2++) {
       var item = splitWordSections[wi2];
-      var wStart = item.top - wh * 0.75;
-      if (current > wStart && !item._decoded) {
+      if (current + wh > item.top - 40 && !item._decoded) {
         item._decoded = true;
         for (var wj = 0; wj < item.words.length; wj++) {
           item.words[wj].style.opacity = '1';
           item.words[wj].classList.add('in-view');
-          decodeElement(item.words[wj], wj * 80);
+          decodeElement(item.words[wj], wj * 50);
         }
       }
     }
@@ -180,14 +180,14 @@
         var scHead = showcaseText.querySelector('.showcase__headline');
         var scDesc = showcaseText.querySelector('.showcase__desc');
         var scStats = showcaseText.querySelector('.showcase__stats');
-        if (scTag) decodeElement(scTag, 100);
-        if (scHead) decodeElement(scHead, 200);
-        if (scDesc) decodeElement(scDesc, 350);
-        if (scStats) decodeElement(scStats, 500);
+        if (scTag) decodeElement(scTag, 0);
+        if (scHead) decodeElement(scHead, 80);
+        if (scDesc) decodeElement(scDesc, 160);
+        if (scStats) decodeElement(scStats, 240);
       }
-      if (scP > 0.1 && showcaseMockup && !showcaseMockup.classList.contains('in-view')) {
+      if (scP > 0.05 && showcaseMockup && !showcaseMockup.classList.contains('in-view')) {
         showcaseMockup.classList.add('in-view');
-        decodeBlock(showcaseMockup, 150);
+        decodeBlock(showcaseMockup, 50);
       }
 
       // Parallax: bg moves slower, mockup drifts subtly
@@ -464,12 +464,12 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     if (el._decoding) return;
     el._decoding = true;
 
-    // Collect all text nodes inside the element
+    // Collect all text nodes inside the element (including whitespace-only for structure)
     var textNodes = [];
     function walkNodes(node) {
-      if (node.nodeType === 3 && node.textContent.trim().length > 0) {
+      if (node.nodeType === 3 && node.textContent.length > 0) {
         textNodes.push({ node: node, original: node.textContent });
-      } else if (node.nodeType === 1) {
+      } else if (node.nodeType === 1 && node.tagName !== 'SVG' && node.tagName !== 'svg') {
         for (var i = 0; i < node.childNodes.length; i++) {
           walkNodes(node.childNodes[i]);
         }
@@ -477,27 +477,34 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     }
     walkNodes(el);
 
-    if (textNodes.length === 0) {
+    // Filter to only nodes with visible characters
+    var visibleNodes = [];
+    for (var v = 0; v < textNodes.length; v++) {
+      if (textNodes[v].original.trim().length > 0) visibleNodes.push(textNodes[v]);
+    }
+
+    if (visibleNodes.length === 0) {
       // No text nodes — treat as block
       decodeBlock(el, delay);
       return;
     }
 
-    // Start all text as scrambled
     var totalLen = 0;
-    for (var t = 0; t < textNodes.length; t++) {
-      totalLen += textNodes[t].original.length;
+    for (var t = 0; t < visibleNodes.length; t++) {
+      totalLen += visibleNodes[t].original.length;
     }
 
-    var speed = Math.max(25, Math.min(50, 1200 / totalLen)); // slightly slower for drama
+    // Faster: resolve ~3 chars per frame at 20ms intervals, total ~350ms for avg text
+    var charsPerFrame = Math.max(2, Math.ceil(totalLen / 15));
+    var frameInterval = 20;
 
     setTimeout(function() {
       // Initial scramble pass — all characters become random
-      for (var t = 0; t < textNodes.length; t++) {
-        var tn = textNodes[t];
+      for (var t = 0; t < visibleNodes.length; t++) {
+        var tn = visibleNodes[t];
         var s = '';
         for (var c = 0; c < tn.original.length; c++) {
-          if (tn.original[c] === ' ' || tn.original[c] === '\n') {
+          if (tn.original[c] === ' ' || tn.original[c] === '\n' || tn.original[c] === '\t') {
             s += tn.original[c];
           } else {
             s += decodeChars[Math.floor(Math.random() * decodeChars.length)];
@@ -509,20 +516,19 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       var frame = 0;
       var interval = setInterval(function() {
         frame++;
-        var globalResolved = Math.floor(frame * (totalLen / (1200 / speed)));
+        var globalResolved = frame * charsPerFrame;
         var runningOffset = 0;
 
-        for (var t = 0; t < textNodes.length; t++) {
-          var tn = textNodes[t];
+        for (var t = 0; t < visibleNodes.length; t++) {
+          var tn = visibleNodes[t];
           var result = '';
           for (var c = 0; c < tn.original.length; c++) {
             var globalIdx = runningOffset + c;
-            if (tn.original[c] === ' ' || tn.original[c] === '\n') {
+            if (tn.original[c] === ' ' || tn.original[c] === '\n' || tn.original[c] === '\t') {
               result += tn.original[c];
             } else if (globalIdx < globalResolved) {
-              result += tn.original[c]; // resolved
+              result += tn.original[c];
             } else {
-              // Still scrambling — cycle through random chars
               result += decodeChars[Math.floor(Math.random() * decodeChars.length)];
             }
           }
@@ -530,14 +536,22 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
           runningOffset += tn.original.length;
         }
 
-        if (globalResolved >= totalLen + 2) {
+        if (globalResolved >= totalLen) {
           clearInterval(interval);
-          // Ensure final text is correct
-          for (var t2 = 0; t2 < textNodes.length; t2++) {
-            textNodes[t2].node.textContent = textNodes[t2].original;
+          // Ensure final text is absolutely correct
+          for (var t2 = 0; t2 < visibleNodes.length; t2++) {
+            visibleNodes[t2].node.textContent = visibleNodes[t2].original;
           }
         }
-      }, speed);
+      }, frameInterval);
+
+      // Safety: force-resolve after 600ms no matter what
+      setTimeout(function() {
+        clearInterval(interval);
+        for (var t3 = 0; t3 < visibleNodes.length; t3++) {
+          visibleNodes[t3].node.textContent = visibleNodes[t3].original;
+        }
+      }, 600);
     }, delay || 0);
   }
 
@@ -565,8 +579,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       el.appendChild(overlay);
 
       // Animate the overlay clearing — randomize chars + fade
-      var steps = 12;
-      var stepDuration = 50;
+      var steps = 8;
+      var stepDuration = 35;
       var currentStep = 0;
 
       var scanInterval = setInterval(function() {
@@ -598,7 +612,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       var textEls = el.querySelectorAll('p, strong, span:not(.gradient-text), h3, h4, h5');
       for (var j = 0; j < textEls.length; j++) {
         if (!textEls[j]._decoding && textEls[j].childNodes.length > 0) {
-          decodeElement(textEls[j], j * 60);
+          decodeElement(textEls[j], j * 30);
         }
       }
     }, delay || 0);

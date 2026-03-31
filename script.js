@@ -432,8 +432,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     var time = Date.now() * 0.001;
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
-      var tw = 0.4 + 0.6 * Math.sin(time * s.s + s.d);
-      var pulse = s.r * (0.9 + 0.1 * Math.sin(time * s.s * 1.5 + s.d));
+      var tw = 0.3 + 0.7 * Math.sin(time * s.s * 1.4 + s.d);
+      var pulse = s.r * (0.85 + 0.15 * Math.sin(time * s.s * 2 + s.d));
       ctx.beginPath();
       ctx.arc(s.x, s.y, pulse, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(200,200,255,' + (s.a * tw) + ')';

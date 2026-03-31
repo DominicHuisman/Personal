@@ -211,6 +211,20 @@ body.cursor-text .cursor__ring {
   font-weight: 500; letter-spacing: 3px;
   text-transform: uppercase; color: var(--text-muted);
   margin-bottom: 24px;
+  position: relative;
+}
+.tag.glitching {
+  animation: tagGlitch 0.4s steps(2) forwards;
+}
+@keyframes tagGlitch {
+  0%   { opacity: 1; transform: translate(0,0) skewX(0deg); }
+  10%  { opacity: 0.7; transform: translate(-2px,1px) skewX(-2deg); letter-spacing: 5px; }
+  20%  { opacity: 1; transform: translate(1px,-1px) skewX(1deg); letter-spacing: 2px; }
+  30%  { opacity: 0.5; transform: translate(-1px,0) skewX(-1deg); letter-spacing: 4px; }
+  40%  { opacity: 1; transform: translate(2px,1px) skewX(2deg); letter-spacing: 3px; }
+  50%  { opacity: 0.8; transform: translate(0,-1px) skewX(0deg); letter-spacing: 3px; }
+  60%  { opacity: 1; transform: translate(-1px,1px) skewX(-1deg); }
+  100% { opacity: 1; transform: translate(0,0) skewX(0deg); letter-spacing: 3px; }
 }
 
 .section-title {

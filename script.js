@@ -783,6 +783,19 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     smoothScroll();
     initStarfield();
     initCursor();
+
+  /* ---------- Auto-Glitch on .tag elements ---------- */
+  var tags = document.querySelectorAll('.tag');
+  function triggerRandomGlitch() {
+    var idx = Math.floor(Math.random() * tags.length);
+    var el = tags[idx];
+    if (!el.classList.contains('glitching')) {
+      el.classList.add('glitching');
+      setTimeout(function() { el.classList.remove('glitching'); }, 400);
+    }
+    setTimeout(triggerRandomGlitch, 2000 + Math.random() * 4000);
+  }
+  if (tags.length) setTimeout(triggerRandomGlitch, 1500 + Math.random() * 3000);
     initReveals();
     initNav();
     initAnchors();

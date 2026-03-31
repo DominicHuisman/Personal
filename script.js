@@ -706,13 +706,69 @@
     }
   }
 
-  /* ---------- Showcase Init ---------- */
+  /* ---------- Showcase Init + Card Flipper ---------- */
+  var showcaseCards = [];
+  var showcaseRocket = null;
+  var showcaseActiveIdx = 0;
+  var showcaseCycleTimer = null;
+
   function initShowcase() {
     showcaseSection = document.querySelector('.showcase');
     if (!showcaseSection) return;
     showcaseText = showcaseSection.querySelector('[data-showcase-text]');
     showcaseMockup = showcaseSection.querySelector('[data-showcase-mockup]');
     showcaseSectionTop = getOffsetTop(showcaseSection);
+
+    showcaseCards = Array.from(showcaseSection.querySelectorAll('[data-showcase-card]'));
+    showcaseRocket = showcaseSection.querySelector('.showcase__rocket');
+    if (showcaseCards.length === 0) return;
+
+    // Set first card active
+    showcaseCards[0].classList.add('card-active');
+    showcaseActiveIdx = 0;
+
+    // Start cycling once mockup is in view
+    startShowcaseCycle();
+  }
+
+  function startShowcaseCycle() {
+    if (showcaseCycleTimer) return;
+    showcaseCycleTimer = setInterval(function() {
+      // Only cycle if the mockup is in view
+      if (!showcaseMockup || !showcaseMockup.classList.contains('in-view')) return;
+      cycleShowcaseCard();
+    }, 3000);
+  }
+
+  function cycleShowcaseCard() {
+    var currentCard = showcaseCards[showcaseActiveIdx];
+    var nextIdx = (showcaseActiveIdx + 1) % showcaseCards.length;
+    var nextCard = showcaseCards[nextIdx];
+
+    // 1) Fire rocket
+    if (showcaseRocket) {
+      showcaseRocket.classList.remove('fly');
+      void showcaseRocket.offsetWidth;
+      showcaseRocket.classList.add('fly');
+    }
+
+    // 2) Hide current card as rocket passes over it (~40% through)
+    setTimeout(function() {
+      currentCard.classList.remove('card-active');
+      currentCard.classList.add('card-exit');
+    }, 320);
+
+    // 3) Show next card after rocket clears (~70% through)
+    setTimeout(function() {
+      nextCard.classList.remove('card-exit');
+      nextCard.classList.add('card-active');
+      showcaseActiveIdx = nextIdx;
+    }, 580);
+
+    // 4) Clean up exit class
+    setTimeout(function() {
+      currentCard.classList.remove('card-exit');
+    }, 900);
   }
 
   /* ---------- Init ---------- */

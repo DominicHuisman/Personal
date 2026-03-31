@@ -203,7 +203,7 @@ body.cursor-text .cursor__ring {
 
 @keyframes gradientFloat {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-12px); }
 }
 
 .tag {
@@ -455,41 +455,41 @@ body.cursor-text .cursor__ring {
   box-shadow: 0 0 8px 3px rgba(162,155,254,0.7), 0 0 16px 6px rgba(162,155,254,0.3);
 }
 .shooting-star:nth-child(1) {
-  top: 15%; left: 10%;
+  top: 10%; left: 5%;
   animation-delay: 0s;
   animation-duration: 3.5s;
   width: 100px;
 }
 .shooting-star:nth-child(2) {
-  top: 35%; left: 55%;
+  top: 30%; left: 45%;
   animation-delay: 1.2s;
   animation-duration: 4s;
   width: 140px;
 }
 .shooting-star:nth-child(3) {
-  top: 55%; left: 25%;
+  top: 55%; left: 15%;
   animation-delay: 2.5s;
   animation-duration: 3.2s;
   width: 90px;
 }
 .shooting-star:nth-child(4) {
-  top: 25%; left: 75%;
+  top: 20%; left: 65%;
   animation-delay: 3.8s;
   animation-duration: 4.5s;
   width: 110px;
   transform: rotate(-40deg);
 }
 .shooting-star:nth-child(5) {
-  top: 65%; left: 60%;
+  top: 70%; left: 35%;
   animation-delay: 5s;
   animation-duration: 3s;
   width: 80px;
   transform: rotate(-30deg);
 }
-.shooting-star:nth-child(6) { top: 10%; left: 40%; animation-delay: 0.8s; animation-duration: 3.8s; width: 130px; transform: rotate(-32deg); }
-.shooting-star:nth-child(7) { top: 45%; left: 80%; animation-delay: 2s; animation-duration: 3.4s; width: 100px; transform: rotate(-38deg); }
-.shooting-star:nth-child(8) { top: 70%; left: 15%; animation-delay: 4.2s; animation-duration: 4.2s; width: 115px; transform: rotate(-28deg); }
-.shooting-star:nth-child(9) { top: 20%; left: 90%; animation-delay: 1.5s; animation-duration: 3.6s; width: 95px; transform: rotate(-42deg); }
+.shooting-star:nth-child(6) { top: 5%; left: 30%; animation-delay: 0.8s; animation-duration: 3.8s; width: 130px; transform: rotate(-32deg); }
+.shooting-star:nth-child(7) { top: 45%; left: 55%; animation-delay: 2s; animation-duration: 3.4s; width: 100px; transform: rotate(-38deg); }
+.shooting-star:nth-child(8) { top: 65%; left: 5%; animation-delay: 4.2s; animation-duration: 4.2s; width: 115px; transform: rotate(-28deg); }
+.shooting-star:nth-child(9) { top: 15%; left: 75%; animation-delay: 1.5s; animation-duration: 3.6s; width: 95px; transform: rotate(-42deg); }
 @keyframes shootingStar {
   0%   { opacity: 0; transform: rotate(-35deg) translateX(0); }
   3%   { opacity: 1; }

@@ -377,14 +377,13 @@
       cyTarget = e.clientY;
     });
 
-    var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .diff__card, .feature, .package-card, .process__step');
-    for (var h = 0; h < hoverables.length; h++) {
-      (function(el) {
-        el.addEventListener('mouseenter', function() {
-          document.body.classList.add('cursor-hover');
-          var txt = el.dataset.cursorText;
-          if (txt && cursorLabel) {
-            cursorLabel.textContent = txt;
+var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .diff__card, .feature, .package-card, .process__step, .nav__toggle, [role="button"]');
+  for (var h = 0; h < hoverables.length; h++) {
+    (function(el) {
+      el.addEventListener('mouseenter', function() {
+        document.body.classList.add('cursor-hover');
+        if (cursorLabel) {
+          cursorLabel.textContent = el.dataset.cursorText || 'Click!';
             document.body.classList.add('cursor-text');
           }
         });
@@ -433,9 +432,10 @@
     var time = Date.now() * 0.001;
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
-      var tw = 0.5 + 0.5 * Math.sin(time * s.s + s.d);
+      var tw = 0.4 + 0.6 * Math.sin(time * s.s + s.d);
+      var pulse = s.r * (0.9 + 0.1 * Math.sin(time * s.s * 1.5 + s.d));
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, pulse, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(200,200,255,' + (s.a * tw) + ')';
       ctx.fill();
     }

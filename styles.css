@@ -35,6 +35,7 @@ body {
   -webkit-font-smoothing: antialiased;
   cursor: none;
 }
+* { cursor: none !important; }
 
 #smooth-wrapper {
   position: fixed;
@@ -64,6 +65,7 @@ body {
   border-radius: 50%; position: absolute;
   top: -4px; left: -4px;
   transition: transform 0.15s var(--ease);
+  box-shadow: 0 0 12px 4px rgba(162,155,254,0.4), 0 0 24px 8px rgba(108,92,231,0.2);
 }
 .cursor__ring {
   width: 40px; height: 40px;
@@ -73,6 +75,7 @@ body {
   transition: width 0.4s var(--ease), height 0.4s var(--ease),
               top 0.4s var(--ease), left 0.4s var(--ease),
               border-color 0.3s, background 0.3s;
+  box-shadow: 0 0 16px 4px rgba(162,155,254,0.15);
 }
 .cursor__label {
   position: absolute; top: -8px; left: 24px;
@@ -88,7 +91,9 @@ body.cursor-hover .cursor__ring {
   top: -32px; left: -32px;
   border-color: var(--accent-light);
   background: rgba(108,92,231,0.08);
+  box-shadow: 0 0 20px 6px rgba(162,155,254,0.25);
 }
+body.cursor-hover .cursor__label { opacity: 1; transform: translateX(0); }
 body.cursor-text .cursor__label { opacity: 1; transform: translateX(0); }
 body.cursor-text .cursor__ring {
   width: 80px; height: 80px;
@@ -434,8 +439,8 @@ body.cursor-text .cursor__ring {
 }
 .shooting-star {
   position: absolute;
-  width: 120px; height: 1px;
-  background: linear-gradient(90deg, rgba(162,155,254,0.8), transparent);
+  width: 120px; height: 2px;
+  background: linear-gradient(90deg, rgba(162,155,254,0.9), transparent);
   border-radius: 1px;
   opacity: 0;
   animation: shootingStar 4s linear infinite;
@@ -443,11 +448,11 @@ body.cursor-text .cursor__ring {
 }
 .shooting-star::before {
   content: '';
-  position: absolute; left: 0; top: -1px;
-  width: 4px; height: 3px;
-  background: rgba(255,255,255,0.9);
+  position: absolute; left: 0; top: -2px;
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,1);
   border-radius: 50%;
-  box-shadow: 0 0 6px 2px rgba(162,155,254,0.5);
+  box-shadow: 0 0 8px 3px rgba(162,155,254,0.7), 0 0 16px 6px rgba(162,155,254,0.3);
 }
 .shooting-star:nth-child(1) {
   top: 15%; left: 10%;
@@ -481,11 +486,15 @@ body.cursor-text .cursor__ring {
   width: 80px;
   transform: rotate(-30deg);
 }
+.shooting-star:nth-child(6) { top: 10%; left: 40%; animation-delay: 0.8s; animation-duration: 3.8s; width: 130px; transform: rotate(-32deg); }
+.shooting-star:nth-child(7) { top: 45%; left: 80%; animation-delay: 2s; animation-duration: 3.4s; width: 100px; transform: rotate(-38deg); }
+.shooting-star:nth-child(8) { top: 70%; left: 15%; animation-delay: 4.2s; animation-duration: 4.2s; width: 115px; transform: rotate(-28deg); }
+.shooting-star:nth-child(9) { top: 20%; left: 90%; animation-delay: 1.5s; animation-duration: 3.6s; width: 95px; transform: rotate(-42deg); }
 @keyframes shootingStar {
   0%   { opacity: 0; transform: rotate(-35deg) translateX(0); }
-  5%   { opacity: 1; }
-  60%  { opacity: 1; }
-  100% { opacity: 0; transform: rotate(-35deg) translateX(300px); }
+  3%   { opacity: 1; }
+  50%  { opacity: 0.8; }
+  100% { opacity: 0; transform: rotate(-35deg) translateX(350px); }
 }
 .hero__content { position: relative; z-index: 1; max-width: 900px; }
 .hero__title {

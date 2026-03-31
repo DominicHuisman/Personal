@@ -353,14 +353,11 @@
     mouseX = e.clientX / ww;
   });
 
+  var hueTime = 0;
   function updateGradientHue() {
-    // Scroll-driven hue: map scroll position through a full colour sweep
-    var scrollRatio = contentH > 0 ? current / contentH : 0;
-    var scrollHue = 220 + scrollRatio * 140; // 220 (purple) → 360 (pink/red) as you scroll
-    // Blend mouse influence (subtle) with scroll influence (dominant)
-    var mouseHue = 220 + mouseX * 60;
-    hueTarget = scrollHue * 0.75 + mouseHue * 0.25;
-    hueCurrent = lerp(hueCurrent, hueTarget, 0.04);
+    // Smooth oscillation between blue (220) and purple (280)
+    hueTime += 0.008;
+    hueCurrent = 250 + Math.sin(hueTime) * 30; // oscillates 220 ↔ 280
     var gEls = document.querySelectorAll('.gradient-text, .scrub-line--gradient');
     for (var g = 0; g < gEls.length; g++) {
       gEls[g].style.setProperty('--hue', hueCurrent);

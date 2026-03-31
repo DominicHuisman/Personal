@@ -192,6 +192,13 @@ body.cursor-text .cursor__ring {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  display: inline-block;
+  animation: gradientFloat 4s ease-in-out infinite;
+}
+
+@keyframes gradientFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
 }
 
 .tag {
@@ -564,7 +571,12 @@ body.cursor-text .cursor__ring {
   margin: 20px 0;
 }
 .scrub-line--gradient {
-  background: var(--gradient);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--hue, 250), 75%, 68%),
+    hsl(calc(var(--hue, 250) + 40), 65%, 72%),
+    hsl(calc(var(--hue, 250) + 80), 70%, 68%)
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

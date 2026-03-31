@@ -241,15 +241,10 @@ body.cursor-text .cursor__ring {
 /* reveal */
 .reveal {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(4px);
-  transition: opacity 0.6s var(--ease), clip-path 0.6s var(--ease), filter 0.5s var(--ease);
+  transition: opacity 0.4s var(--ease);
 }
 .reveal.visible {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: blur(0px);
-  animation: glitchReveal 0.5s steps(3) forwards;
 }
 
 /* ============================================
@@ -259,32 +254,23 @@ body.cursor-text .cursor__ring {
 /* Scroll fade-up: driven by scroll position */
 .scroll-fade-up {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(4px);
-  will-change: opacity, clip-path, filter;
+  will-change: opacity;
 }
 .scroll-fade-up.in-view {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: blur(0px);
-  transition: opacity 0.7s var(--ease), clip-path 0.7s var(--ease), filter 0.5s var(--ease);
-  animation: glitchReveal 0.5s steps(3) forwards;
+  transition: opacity 0.3s var(--ease);
 }
 
-/* Scroll cards: glitch entrance */
+/* Scroll cards: decode entrance */
 .scroll-card {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(6px) brightness(1.5);
-  will-change: opacity, clip-path, filter;
+  will-change: opacity;
 }
 
-/* Scroll slide-in: process steps glitch in */
+/* Scroll slide-in: process steps decode */
 .scroll-slide-in {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(4px);
-  will-change: opacity, clip-path, filter;
+  will-change: opacity;
 }
 
 /* Process step animated line fill */
@@ -303,25 +289,32 @@ body.cursor-text .cursor__ring {
 .split-word {
   display: inline-block;
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(3px);
   transform-origin: bottom center;
-  will-change: opacity, clip-path, filter;
+  will-change: opacity;
 }
 .split-word.in-view {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: blur(0px);
 }
 
-/* Glitch reveal keyframe */
-@keyframes glitchReveal {
-  0%   { transform: skewX(0deg); }
-  15%  { transform: skewX(-3deg) translateX(-2px); filter: brightness(1.4) hue-rotate(10deg); }
-  30%  { transform: skewX(2deg) translateX(1px); filter: brightness(0.8); }
-  45%  { transform: skewX(-1deg); filter: brightness(1.2) hue-rotate(-5deg); }
-  60%  { transform: skewX(1deg) translateX(-1px); }
-  100% { transform: skewX(0deg) translateX(0); filter: none; }
+/* Decode overlay for block elements */
+.decode-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--bg-deep);
+  color: rgba(108, 92, 231, 0.7);
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  line-height: 1.15;
+  letter-spacing: 1px;
+  overflow: hidden;
+  pointer-events: none;
+  word-break: break-all;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+.decode-overlay.done {
+  opacity: 0;
 }
   transform: translateY(0) rotateX(0);
   transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
@@ -946,14 +939,10 @@ body.cursor-text .cursor__ring {
 /* --- LEFT: Text --- */
 .showcase__text {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(4px);
 }
 .showcase__text.in-view {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: none;
-  animation: glitchReveal 0.5s steps(3) forwards;
+  transition: opacity 0.3s var(--ease);
 }
 
 .showcase__tag {
@@ -965,14 +954,10 @@ body.cursor-text .cursor__ring {
   color: var(--text-dim);
   margin-bottom: 24px;
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(3px);
 }
 .showcase__text.in-view .showcase__tag {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: none;
-  animation: glitchReveal 0.4s steps(3) 0.1s forwards;
+  transition: opacity 0.3s 0.1s var(--ease);
 }
 
 .showcase__headline {
@@ -984,14 +969,10 @@ body.cursor-text .cursor__ring {
   letter-spacing: -1px;
   margin-bottom: 24px;
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(3px);
 }
 .showcase__text.in-view .showcase__headline {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: none;
-  animation: glitchReveal 0.5s steps(3) 0.2s forwards;
+  transition: opacity 0.3s 0.2s var(--ease);
 }
 
 .showcase__desc {
@@ -1002,14 +983,10 @@ body.cursor-text .cursor__ring {
   max-width: 440px;
   margin-bottom: 48px;
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(3px);
 }
 .showcase__text.in-view .showcase__desc {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: none;
-  animation: glitchReveal 0.5s steps(3) 0.35s forwards;
+  transition: opacity 0.3s 0.35s var(--ease);
 }
 
 /* Stats */
@@ -1017,14 +994,10 @@ body.cursor-text .cursor__ring {
   display: flex;
   gap: 40px;
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(3px);
 }
 .showcase__text.in-view .showcase__stats {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: none;
-  animation: glitchReveal 0.5s steps(3) 0.5s forwards;
+  transition: opacity 0.3s 0.5s var(--ease);
 }
 
 .showcase__stat {
@@ -1063,14 +1036,11 @@ body.cursor-text .cursor__ring {
 /* --- RIGHT: UI Mockup --- */
 .showcase__mockup {
   opacity: 0;
-  clip-path: inset(0 100% 0 0);
-  filter: blur(6px);
+  position: relative;
 }
 .showcase__mockup.in-view {
   opacity: 1;
-  clip-path: inset(0 0% 0 0);
-  filter: none;
-  animation: glitchReveal 0.6s steps(3) 0.15s forwards;
+  transition: opacity 0.3s 0.15s var(--ease);
 }
 
 .showcase__device {

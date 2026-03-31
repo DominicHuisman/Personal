@@ -118,81 +118,76 @@
 
     /* ====== SCROLL-DRIVEN SECTION ANIMATIONS ====== */
 
-    /* 1) Scroll fade-ups */
+    /* 1) Scroll fade-ups — trigger decode on enter */
     for (var fi = 0; fi < scrollFadeUps.length; fi++) {
       var fu = scrollFadeUps[fi];
       if (current + wh * 0.82 > fu._top && !fu.classList.contains('in-view')) {
         fu.classList.add('in-view');
+        decodeElement(fu, fi * 60);
       }
     }
 
-    /* 2) Card glitch reveals */
+    /* 2) Card decode reveals */
     for (var ci = 0; ci < scrollCards.length; ci++) {
       var card = scrollCards[ci];
       var cStart = card._sectionTop - wh * 0.65;
-      var cEnd = cStart + wh * 0.55;
-      var cp = Math.max(0, Math.min(1, (current - cStart) / (cEnd - cStart)));
-      var cDelay = card._idx * 0.15;
-      var cDelayed = Math.max(0, Math.min(1, (cp - cDelay) / (1 - cDelay)));
-      var cEased = 1 - Math.pow(1 - cDelayed, 3);
-
-      var clipRight = (1 - cEased) * 100;
-      card.style.clipPath = 'inset(0 ' + clipRight + '% 0 0)';
-      card.style.filter = cEased < 1 ? 'blur(' + (6 * (1 - cEased)) + 'px) brightness(' + (1 + 0.5 * (1 - cEased)) + ')' : 'none';
-      card.style.opacity = Math.min(1, cDelayed * 2.5);
-      if (cEased > 0.1 && cEased < 0.9) {
-        card.style.transform = 'skewX(' + ((Math.random() - 0.5) * 3 * (1 - cEased)) + 'deg)';
-      } else {
-        card.style.transform = 'none';
+      var cVisible = current + wh * 0.65 > card._sectionTop;
+      if (cVisible && !card._decoded) {
+        card._decoded = true;
+        card.style.opacity = '1';
+        decodeBlock(card, card._idx * 120);
       }
     }
 
-    /* 3) Process step glitch-in */
+    /* 3) Process step decode */
     for (var si = 0; si < scrollSlides.length; si++) {
       var slide = scrollSlides[si];
-      var sStart = slide._sectionTop - wh * 0.55;
-      var sEnd = sStart + wh * 0.65;
-      var sp2 = Math.max(0, Math.min(1, (current - sStart) / (sEnd - sStart)));
-      var sDelay2 = slide._idx * 0.18;
-      var sDelayed = Math.max(0, Math.min(1, (sp2 - sDelay2) / (1 - sDelay2)));
-      var sEased = 1 - Math.pow(1 - sDelayed, 4);
-
-      var sClipRight = (1 - sEased) * 100;
-      slide.style.clipPath = 'inset(0 ' + sClipRight + '% 0 0)';
-      slide.style.filter = sEased < 1 ? 'blur(' + (4 * (1 - sEased)) + 'px)' : 'none';
-      slide.style.opacity = Math.min(1, sDelayed * 2);
-
-      var sLine = slide.querySelector('.process__line');
-      if (sLine) sLine.style.width = (sEased * 100) + '%';
+      var sVisible = current + wh * 0.55 > slide._sectionTop;
+      if (sVisible && !slide._decoded) {
+        slide._decoded = true;
+        slide.style.opacity = '1';
+        decodeBlock(slide, slide._idx * 100);
+        var sLine = slide.querySelector('.process__line');
+        if (sLine) {
+          sLine.style.transition = 'width 1s var(--ease)';
+          sLine.style.width = '100%';
+        }
+      }
     }
 
-    /* 4) Split-word glitch reveals */
+    /* 4) Split-word decode reveals */
     for (var wi2 = 0; wi2 < splitWordSections.length; wi2++) {
       var item = splitWordSections[wi2];
       var wStart = item.top - wh * 0.75;
-      var wEnd = wStart + wh * 0.35;
-      var wp2 = Math.max(0, Math.min(1, (current - wStart) / (wEnd - wStart)));
-
-      for (var wj = 0; wj < item.words.length; wj++) {
-        var wordDelay = (wj / item.words.length) * 0.5;
-        var wwp = Math.max(0, Math.min(1, (wp2 - wordDelay) / (1 - wordDelay)));
-        var wEased = 1 - Math.pow(1 - wwp, 3);
-        var wClipRight = (1 - wEased) * 100;
-        item.words[wj].style.clipPath = 'inset(0 ' + wClipRight + '% 0 0)';
-        item.words[wj].style.filter = wEased < 1 ? 'blur(' + (3 * (1 - wEased)) + 'px)' : 'none';
-        item.words[wj].style.opacity = Math.min(1, wwp * 2);
+      if (current > wStart && !item._decoded) {
+        item._decoded = true;
+        for (var wj = 0; wj < item.words.length; wj++) {
+          item.words[wj].style.opacity = '1';
+          item.words[wj].classList.add('in-view');
+          decodeElement(item.words[wj], wj * 80);
+        }
       }
     }
 
-    /* 5) Showcase — scroll-driven reveal */
+    /* 5) Showcase — decode reveal */
     if (showcaseSection) {
       var scTop = showcaseSectionTop - wh * 0.75;
       var scP = Math.max(0, Math.min(1, (current - scTop) / (wh * 0.5)));
       if (scP > 0 && showcaseText && !showcaseText.classList.contains('in-view')) {
         showcaseText.classList.add('in-view');
+        // Decode the showcase text children
+        var scTag = showcaseText.querySelector('.showcase__tag');
+        var scHead = showcaseText.querySelector('.showcase__headline');
+        var scDesc = showcaseText.querySelector('.showcase__desc');
+        var scStats = showcaseText.querySelector('.showcase__stats');
+        if (scTag) decodeElement(scTag, 100);
+        if (scHead) decodeElement(scHead, 200);
+        if (scDesc) decodeElement(scDesc, 350);
+        if (scStats) decodeElement(scStats, 500);
       }
       if (scP > 0.1 && showcaseMockup && !showcaseMockup.classList.contains('in-view')) {
         showcaseMockup.classList.add('in-view');
+        decodeBlock(showcaseMockup, 150);
       }
 
       // Parallax: bg moves slower, mockup drifts subtly
@@ -461,49 +456,164 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
   }
 
 
-  /* ---------- Text Scramble on Scroll Reveal ---------- */
-  var scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
-  function scrambleText(el) {
-    var original = el.dataset.scrambleText;
-    if (!original) return;
-    var length = original.length;
-    var iterations = 0;
-    var maxIterations = length * 2;
-    var interval = setInterval(function() {
-      var result = '';
-      for (var i = 0; i < length; i++) {
-        if (original[i] === ' ') { result += ' '; continue; }
-        if (i < iterations / 2) {
-          result += original[i];
-        } else {
-          result += scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+  /* ---------- Decode Reveal System ---------- */
+  var decodeChars = '01アイウエオカキクケコ░▒▓█▌▐@#$%&<>/{}[]';
+
+  /* Decode text element: scrambles characters then resolves left-to-right */
+  function decodeElement(el, delay) {
+    if (el._decoding) return;
+    el._decoding = true;
+
+    // Collect all text nodes inside the element
+    var textNodes = [];
+    function walkNodes(node) {
+      if (node.nodeType === 3 && node.textContent.trim().length > 0) {
+        textNodes.push({ node: node, original: node.textContent });
+      } else if (node.nodeType === 1) {
+        for (var i = 0; i < node.childNodes.length; i++) {
+          walkNodes(node.childNodes[i]);
         }
       }
-      el.textContent = result;
-      iterations++;
-      if (iterations > maxIterations) {
-        clearInterval(interval);
-        el.textContent = original;
+    }
+    walkNodes(el);
+
+    if (textNodes.length === 0) {
+      // No text nodes — treat as block
+      decodeBlock(el, delay);
+      return;
+    }
+
+    // Start all text as scrambled
+    var totalLen = 0;
+    for (var t = 0; t < textNodes.length; t++) {
+      totalLen += textNodes[t].original.length;
+    }
+
+    var speed = Math.max(25, Math.min(50, 1200 / totalLen)); // slightly slower for drama
+
+    setTimeout(function() {
+      // Initial scramble pass — all characters become random
+      for (var t = 0; t < textNodes.length; t++) {
+        var tn = textNodes[t];
+        var s = '';
+        for (var c = 0; c < tn.original.length; c++) {
+          if (tn.original[c] === ' ' || tn.original[c] === '\n') {
+            s += tn.original[c];
+          } else {
+            s += decodeChars[Math.floor(Math.random() * decodeChars.length)];
+          }
+        }
+        tn.node.textContent = s;
       }
-    }, 30);
+
+      var frame = 0;
+      var interval = setInterval(function() {
+        frame++;
+        var globalResolved = Math.floor(frame * (totalLen / (1200 / speed)));
+        var runningOffset = 0;
+
+        for (var t = 0; t < textNodes.length; t++) {
+          var tn = textNodes[t];
+          var result = '';
+          for (var c = 0; c < tn.original.length; c++) {
+            var globalIdx = runningOffset + c;
+            if (tn.original[c] === ' ' || tn.original[c] === '\n') {
+              result += tn.original[c];
+            } else if (globalIdx < globalResolved) {
+              result += tn.original[c]; // resolved
+            } else {
+              // Still scrambling — cycle through random chars
+              result += decodeChars[Math.floor(Math.random() * decodeChars.length)];
+            }
+          }
+          tn.node.textContent = result;
+          runningOffset += tn.original.length;
+        }
+
+        if (globalResolved >= totalLen + 2) {
+          clearInterval(interval);
+          // Ensure final text is correct
+          for (var t2 = 0; t2 < textNodes.length; t2++) {
+            textNodes[t2].node.textContent = textNodes[t2].original;
+          }
+        }
+      }, speed);
+    }, delay || 0);
+  }
+
+  /* Decode block element: adds an overlay of scramble characters that clears away */
+  function decodeBlock(el, delay) {
+    if (el._blockDecoded) return;
+    el._blockDecoded = true;
+
+    setTimeout(function() {
+      if (getComputedStyle(el).position === 'static') {
+        el.style.position = 'relative';
+      }
+
+      var overlay = document.createElement('div');
+      overlay.className = 'decode-overlay';
+
+      // Fill with random characters
+      var area = el.offsetWidth * el.offsetHeight;
+      var charCount = Math.floor(area / 35);
+      var chars = '';
+      for (var i = 0; i < charCount; i++) {
+        chars += decodeChars[Math.floor(Math.random() * decodeChars.length)];
+      }
+      overlay.textContent = chars;
+      el.appendChild(overlay);
+
+      // Animate the overlay clearing — randomize chars + fade
+      var steps = 12;
+      var stepDuration = 50;
+      var currentStep = 0;
+
+      var scanInterval = setInterval(function() {
+        currentStep++;
+        var fraction = currentStep / steps;
+        overlay.style.opacity = 1 - fraction;
+
+        // Scramble the remaining visible chars (fewer each step)
+        var remaining = Math.floor(charCount * (1 - fraction * 0.8));
+        var s = '';
+        for (var j = 0; j < remaining; j++) {
+          // Occasionally insert spaces to create "clearing" gaps
+          if (Math.random() < fraction * 0.4) {
+            s += ' ';
+          } else {
+            s += decodeChars[Math.floor(Math.random() * decodeChars.length)];
+          }
+        }
+        overlay.textContent = s;
+
+        if (currentStep >= steps) {
+          clearInterval(scanInterval);
+          overlay.classList.add('done');
+          setTimeout(function() { overlay.remove(); }, 250);
+        }
+      }, stepDuration);
+
+      // Also decode text inside the element
+      var textEls = el.querySelectorAll('p, strong, span:not(.gradient-text), h3, h4, h5');
+      for (var j = 0; j < textEls.length; j++) {
+        if (!textEls[j]._decoding && textEls[j].childNodes.length > 0) {
+          decodeElement(textEls[j], j * 60);
+        }
+      }
+    }, delay || 0);
+  }
+
+  /* ---------- Text Scramble (now handled by decodeElement) ---------- */
+  var scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*';
+  function scrambleText(el) {
+    // Legacy wrapper — use decodeElement instead
+    decodeElement(el, 0);
   }
 
   function initTextScramble() {
-    var scrambleEls = document.querySelectorAll('.tag.scroll-fade-up');
-    for (var i = 0; i < scrambleEls.length; i++) {
-      scrambleEls[i].dataset.scrambleText = scrambleEls[i].textContent;
-    }
-    var scrambleObs = new IntersectionObserver(function(entries) {
-      for (var j = 0; j < entries.length; j++) {
-        if (entries[j].isIntersecting) {
-          scrambleText(entries[j].target);
-          scrambleObs.unobserve(entries[j].target);
-        }
-      }
-    }, { threshold: 0.5 });
-    for (var k = 0; k < scrambleEls.length; k++) {
-      scrambleObs.observe(scrambleEls[k]);
-    }
+    // Tags now get decoded by the scroll system via decodeElement
+    // No-op: kept for compatibility
   }
 
   /* ---------- 3D Tilt Cards ---------- */

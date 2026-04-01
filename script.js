@@ -657,7 +657,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
 
   /* ---------- Starfield ---------- */
   var stars = [];
-  var STAR_COUNT = 350;
+  var STAR_COUNT = 600;
 
   function initStarfield() {
     if (!starCanvas || !ctx) return;
@@ -665,7 +665,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     for (var i = 0; i < STAR_COUNT; i++) {
       stars.push({
         x: Math.random() * ww, y: Math.random() * wh,
-        r: Math.random() * 1.2 + 0.3, a: Math.random() * 0.5 + 0.1,
+        r: Math.random() * 2 + 0.5, a: Math.random() * 0.6 + 0.3,
         s: Math.random() * 0.5 + 0.1, d: Math.random() * Math.PI * 2
       });
     }
@@ -684,12 +684,20 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     var time = Date.now() * 0.001;
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
-      var tw = 0.3 + 0.7 * Math.sin(time * s.s * 1.4 + s.d);
+      var tw = 0.4 + 0.6 * Math.sin(time * s.s * 1.4 + s.d);
       var pulse = s.r * (0.85 + 0.15 * Math.sin(time * s.s * 2 + s.d));
+      var alpha = s.a * tw;
       ctx.beginPath();
       ctx.arc(s.x, s.y, pulse, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(200,200,255,' + (s.a * tw) + ')';
+      ctx.fillStyle = 'rgba(210,210,255,' + alpha + ')';
       ctx.fill();
+      // Add glow for larger stars
+      if (s.r > 1.5) {
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, pulse * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(180,180,255,' + (alpha * 0.15) + ')';
+        ctx.fill();
+      }
     }
     requestAnimationFrame(animateStars);
   }

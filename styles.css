@@ -1338,6 +1338,7 @@ body.cursor-text .cursor__ring {
 .portfolio__img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
   transition: transform 0.8s var(--ease);
 }
 .portfolio__row:hover .portfolio__img {

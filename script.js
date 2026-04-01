@@ -657,7 +657,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
 
   /* ---------- Starfield ---------- */
   var stars = [];
-  var STAR_COUNT = 600;
+  var STAR_COUNT = 450;
 
   function initStarfield() {
     if (!starCanvas || !ctx) return;
@@ -665,7 +665,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     for (var i = 0; i < STAR_COUNT; i++) {
       stars.push({
         x: Math.random() * ww, y: Math.random() * wh,
-        r: Math.random() * 2 + 0.5, a: Math.random() * 0.6 + 0.3,
+        r: Math.random() * 1.6 + 0.4, a: Math.random() * 0.5 + 0.2,
         s: Math.random() * 0.5 + 0.1, d: Math.random() * Math.PI * 2
       });
     }
@@ -694,8 +694,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       // Add glow for larger stars
       if (s.r > 1.5) {
         ctx.beginPath();
-        ctx.arc(s.x, s.y, pulse * 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(180,180,255,' + (alpha * 0.15) + ')';
+        ctx.arc(s.x, s.y, pulse * 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(180,180,255,' + (alpha * 0.1) + ')';
         ctx.fill();
       }
     }

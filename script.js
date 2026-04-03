@@ -44,6 +44,7 @@
   var wh = window.innerHeight;
   var ww = window.innerWidth;
   var contentH = 0;
+  var isMobile = ww < 769;
 
   /* ---------- Animation Elements ---------- */
   var scrollCards = [];
@@ -77,17 +78,24 @@
 
   /* ---------- Smooth Scroll Engine ---------- */
   function setBodyHeight() {
+    if (isMobile) return;
     contentH = content.scrollHeight;
     document.body.style.height = contentH + 'px';
   }
 
   function smoothScroll() {
-    target = window.scrollY;
-    current = lerp(current, target, ease);
-    if (Math.abs(current - target) < 0.5) current = target;
-    content.style.transform = 'translate3d(0,' + -current + 'px,0)';
+    if (isMobile) {
+      current = window.scrollY;
+      target = current;
+    } else {
+      target = window.scrollY;
+      current = lerp(current, target, ease);
+      if (Math.abs(current - target) < 0.5) current = target;
+      content.style.transform = 'translate3d(0,' + -current + 'px,0)';
+    }
 
     /* Parallax */
+    if (!isMobile) {
     for (var pi = 0; pi < parallaxEls.length; pi++) {
       var pel = parallaxEls[pi];
       var speed = parseFloat(pel.dataset.speed) || 0;
@@ -95,6 +103,7 @@
       var relY = pTop - current;
       var y = (relY + pel.offsetHeight / 2 - wh / 2) * speed;
       pel.style.transform = 'translate3d(0,' + y + 'px,0)';
+    }
     }
 
     /* Text zoom intro */
@@ -357,13 +366,14 @@
   });
 
   var hueTime = 0;
+  var gradientEls = null;
   function updateGradientHue() {
     // Smooth oscillation between blue (220) and purple (280)
     hueTime += 0.008;
     hueCurrent = 250 + Math.sin(hueTime) * 30; // oscillates 220 ↔ 280
-    var gEls = document.querySelectorAll('.gradient-text, .scrub-line--gradient');
-    for (var g = 0; g < gEls.length; g++) {
-      gEls[g].style.setProperty('--hue', hueCurrent);
+    if (!gradientEls) gradientEls = document.querySelectorAll('.gradient-text, .scrub-line--gradient');
+    for (var g = 0; g < gradientEls.length; g++) {
+      gradientEls[g].style.setProperty('--hue', hueCurrent);
     }
   }
 
@@ -661,8 +671,9 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
 
   function initStarfield() {
     if (!starCanvas || !ctx) return;
+    var starCount = isMobile ? 120 : STAR_COUNT;
     resizeCanvas();
-    for (var i = 0; i < STAR_COUNT; i++) {
+    for (var i = 0; i < starCount; i++) {
       stars.push({
         x: Math.random() * ww, y: Math.random() * wh,
         r: Math.random() * 1.6 + 0.4, a: Math.random() * 0.5 + 0.2,
@@ -691,8 +702,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       ctx.arc(s.x, s.y, pulse, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(210,210,255,' + alpha + ')';
       ctx.fill();
-      // Add glow for larger stars
-      if (s.r > 1.5) {
+      // Add glow for larger stars (skip on mobile for perf)
+      if (!isMobile && s.r > 1.5) {
         ctx.beginPath();
         ctx.arc(s.x, s.y, pulse * 2, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(180,180,255,' + (alpha * 0.1) + ')';
@@ -1076,6 +1087,7 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
     resizeTimer = setTimeout(function() {
       wh = window.innerHeight;
       ww = window.innerWidth;
+      isMobile = ww < 769;
       setBodyHeight();
       resizeCanvas();
       if (trailCanvas) { trailCanvas.width = ww; trailCanvas.height = wh; }

@@ -1521,33 +1521,6 @@ body.cursor-text .cursor__ring {
     transform: none !important;
   }
 
-  /* Reduce backdrop-filter overhead */
-  .nav.scrolled {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-  }
-  .showcase__device {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  .showcase__ui-card {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
-  /* Reduce will-change on mass elements */
-  .scrub-char { will-change: auto; }
-  .split-word { will-change: auto; }
-  .scroll-fade-up { will-change: auto; }
-  .scroll-card { will-change: auto; }
-  .scroll-slide-in { will-change: auto; }
-  .tilt-card { will-change: auto; }
-  [data-cta-scale] { will-change: auto; }
-  [data-cta-scale] .big-cta__title { will-change: auto; }
-
-  /* Hide excess shooting stars */
-  .shooting-star:nth-child(n+5) { display: none; }
-
   .nav__links {
     position: fixed; top: 0; right: -100%;
     width: 100%; height: 100vh;

@@ -95,7 +95,6 @@
     }
 
     /* Parallax */
-    if (!isMobile) {
     for (var pi = 0; pi < parallaxEls.length; pi++) {
       var pel = parallaxEls[pi];
       var speed = parseFloat(pel.dataset.speed) || 0;
@@ -103,7 +102,6 @@
       var relY = pTop - current;
       var y = (relY + pel.offsetHeight / 2 - wh / 2) * speed;
       pel.style.transform = 'translate3d(0,' + y + 'px,0)';
-    }
     }
 
     /* Text zoom intro */
@@ -671,9 +669,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
 
   function initStarfield() {
     if (!starCanvas || !ctx) return;
-    var starCount = isMobile ? 120 : STAR_COUNT;
     resizeCanvas();
-    for (var i = 0; i < starCount; i++) {
+    for (var i = 0; i < STAR_COUNT; i++) {
       stars.push({
         x: Math.random() * ww, y: Math.random() * wh,
         r: Math.random() * 1.6 + 0.4, a: Math.random() * 0.5 + 0.2,
@@ -702,8 +699,8 @@ var hoverables = document.querySelectorAll('a, button, .btn, .work__card-h, .dif
       ctx.arc(s.x, s.y, pulse, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(210,210,255,' + alpha + ')';
       ctx.fill();
-      // Add glow for larger stars (skip on mobile for perf)
-      if (!isMobile && s.r > 1.5) {
+      // Add glow for larger stars
+      if (s.r > 1.5) {
         ctx.beginPath();
         ctx.arc(s.x, s.y, pulse * 2, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(180,180,255,' + (alpha * 0.1) + ')';

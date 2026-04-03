@@ -1554,6 +1554,15 @@ body.cursor-text .cursor__ring {
   .showcase__mockup.in-view { transform: translateX(0); }
   .showcase__device { padding: 24px; }
 
+  /* Fix Growth card clipping */
+  .packages-deck__cards { width: 320px; height: 580px; }
+
+  /* Reduce floating animation distances */
+  .gradient-text { animation-name: gradientFloatMobile; }
+  .showcase__device { animation-name: showcaseFloatMobile; }
+  .hero__orb--1, .hero__orb--2 { animation-name: orbFloatMobile; }
+  .zoom-intro__arrow { animation-name: hintBounceMobile; }
+
   .testimonials__row { grid-template-columns: 1fr; }
 
   .big-cta__title {
@@ -1564,6 +1573,23 @@ body.cursor-text .cursor__ring {
   .form-row { grid-template-columns: 1fr; }
   .footer__top { flex-direction: column; align-items: flex-start; }
   .footer__nav { flex-wrap: wrap; gap: 20px; }
+}
+
+@keyframes gradientFloatMobile {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes showcaseFloatMobile {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes orbFloatMobile {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(12px, -8px) scale(1.08); }
+}
+@keyframes hintBounceMobile {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(3px); }
 }
 
 @media (max-width: 480px) {
